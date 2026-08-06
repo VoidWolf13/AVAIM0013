@@ -1,4 +1,5 @@
 import { Track, GitHubSyncConfig } from '../types';
+import { classifyByFilename } from './audioGenreClassifier';
 
 export const DEFAULT_GITHUB_CONFIG: GitHubSyncConfig = {
   owner: 'VoidWolf13',
@@ -8,27 +9,14 @@ export const DEFAULT_GITHUB_CONFIG: GitHubSyncConfig = {
   autoSync: true,
 };
 
-const STORAGE_KEY_CONFIG = 'avaim_github_sync_config';
 const STORAGE_KEY_CACHED_TRACKS = 'avaim_github_cached_tracks';
 
 export function getStoredGitHubConfig(): GitHubSyncConfig {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY_CONFIG);
-    if (saved) {
-      return { ...DEFAULT_GITHUB_CONFIG, ...JSON.parse(saved) };
-    }
-  } catch {
-    // fallback
-  }
   return DEFAULT_GITHUB_CONFIG;
 }
 
-export function saveGitHubConfig(config: GitHubSyncConfig): void {
-  try {
-    localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
-  } catch (err) {
-    console.warn('Failed to save github config to localStorage:', err);
-  }
+export function saveGitHubConfig(_config: GitHubSyncConfig): void {
+  // Fixed configuration locked to root music/ folder
 }
 
 export function getCachedGitHubTracks(): Track[] | null {
@@ -80,28 +68,28 @@ export function inferMoodAndCategory(filename: string, format: string): {
 
   let category: Track['category'] = 'ambient';
   let moodTag = 'Dark Ambient';
-  let description = 'Atmospheric sonic landscape with deep textures and introspective synth layers.';
+  let description = 'Атмосферный звуковой ландшафт с глубокими текстурами и синтезаторными слоями.';
 
   if (lower.includes('beat') || lower.includes('shake') || lower.includes('dance') || lower.includes('techno') || lower.includes('edm')) {
     category = 'edm';
     moodTag = 'Industrial Beat';
-    description = 'High-energy rhythmic electronic groove with driving pulses and bass impact.';
+    description = 'Энергичный электронный ритм с плотным басом и динамичными акцентами.';
   } else if (lower.includes('chill') || lower.includes('rest') || lower.includes('downtempo') || lower.includes('slow') || lower.includes('calm')) {
     category = 'downtempo';
     moodTag = 'Deep Downtempo';
-    description = 'Gentle melancholic rhythms and warm pads designed for unwinding and contemplation.';
+    description = 'Мягкий меланхоличный темп и теплые пэды для спокойного прослушивания.';
   } else if (lower.includes('dark') || lower.includes('void') || lower.includes('hole') || lower.includes('shadow') || lower.includes('horror')) {
     category = 'dark';
     moodTag = 'Void Atmospheric';
-    description = 'Submerged sub-bass frequencies and eerie reverberations exploring solitary depths.';
+    description = 'Глубокие суб-басы и пространственные реверберации тёмного эмбиента.';
   } else if (lower.includes('sky') || lower.includes('cinematic') || lower.includes('dawn') || lower.includes('space') || lower.includes('ocean') || lower.includes('sea')) {
     category = 'cinematic';
     moodTag = 'Cinematic Soundscape';
-    description = 'Expansive cinematic orchestration and panoramic synth sweeps.';
+    description = 'Пространственное кинематографичное звучание с панорамными текстурами.';
   } else if (lower.includes('glitch') || lower.includes('noise') || lower.includes('test') || lower.includes('modular') || lower.includes('exp')) {
     category = 'experimental';
     moodTag = 'Experimental Tone';
-    description = 'Unconventional sound synthesis, modular modulations, and textural sound design.';
+    description = 'Экспериментальный саунд-дизайн, модулярные синтезаторы и текстурные шумы.';
   }
 
   const isFlac = format.toLowerCase() === 'flac';
@@ -176,8 +164,12 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
   const tracks: Track[] = audioFiles.map((file, idx) => {
     const extMatch = file.name.match(/\.([a-z0-9]+)$/i);
     const format = (extMatch ? extMatch[1].toLowerCase() : 'mp3');
-    const { category, moodTag, description, bitrate } = inferMoodAndCategory(file.name, format);
+    const classification = classifyByFilename(file.name);
     const title = formatAudioTitle(file.name);
+
+    const isFlac = format.toLowerCase() === 'flac';
+    const isWav = format.toLowerCase() === 'wav';
+    const bitrate = isFlac ? 'Lossless FLAC' : isWav ? 'Uncompressed WAV' : '320 kbps High Quality';
 
     // Prefer raw github usercontent or github pages direct download url
     const downloadUrl = file.download_url || 
@@ -198,14 +190,16 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
       filename: file.name,
       audioUrl: downloadUrl,
       format,
-      category,
-      moodTag,
+      category: classification.genre,
+      moodTag: classification.moodTag,
       durationEst: `${estMin}:${String(estSec).padStart(2, '0')}`,
-      description,
+      description: classification.description,
       bitrate,
       sampleRate: format === 'flac' ? '44.1 kHz / 24-bit' : '44.1 kHz / 16-bit',
+      bpm: classification.estimatedBpm,
       source: 'github',
       sizeBytes: file.size,
+      isAnalyzed: false,
     };
   });
 

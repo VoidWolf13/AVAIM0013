@@ -1,7 +1,7 @@
 import { Track } from '../types';
 
 export const ARTIST_NAME = 'AVAIM0013';
-export const ARTIST_DESCRIPTION = 'Sound archive & music player. Dynamically reads and streams audio files directly from the GitHub repository.';
+export const ARTIST_DESCRIPTION = 'Архив звука и музыкальный плеер. Динамически считывает и воспроизводит аудиофайлы напрямую из репозитория GitHub.';
 export const ARTIST_EMAIL = 'avaim0013@gmail.com';
 export const GITHUB_REPO_URL = 'https://github.com/VoidWolf13/AVAIM0013';
 export const GITHUB_PAGES_URL = 'https://voidwolf13.github.io/AVAIM0013/';

@@ -1,6 +1,6 @@
 {
   "name": "anton_void",
-  "description": "Atmospheric audio player and sound archive for artist AVAIM0013, dynamically streaming music from the GitHub repository with real-time visualizers, custom EQ, and ambient soundscapes.",
+  "description": "Атмосферный музыкальный плеер и архив треков исполнителя AVAIM0013 с визуализаторами спектра, эквалайзером, таймером сна и поддержкой очередей воспроизведения.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

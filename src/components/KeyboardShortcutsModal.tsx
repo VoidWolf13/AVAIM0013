@@ -7,16 +7,16 @@ interface KeyboardShortcutsModalProps {
 }
 
 const SHORTCUTS = [
-  { key: 'Space', desc: 'Play / Pause audio playback' },
-  { key: '← / →', desc: 'Seek 5 seconds backward / forward' },
-  { key: '↑ / ↓', desc: 'Adjust volume up / down (5%)' },
-  { key: 'M', desc: 'Mute / Unmute audio' },
-  { key: 'N', desc: 'Next track' },
-  { key: 'P', desc: 'Previous track' },
-  { key: 'S', desc: 'Toggle Shuffle mode' },
-  { key: 'R', desc: 'Toggle Repeat mode' },
-  { key: 'F', desc: 'Toggle Fullscreen Zen Mode' },
-  { key: 'Esc', desc: 'Close open dialogs / modals' },
+  { key: 'Пробел', desc: 'Воспроизведение / Пауза' },
+  { key: '← / →', desc: 'Перемотка на 5 секунд назад / вперед' },
+  { key: '↑ / ↓', desc: 'Регулировка громкости (±5%)' },
+  { key: 'M', desc: 'Включить / выключить звук' },
+  { key: 'N', desc: 'Следующий трек' },
+  { key: 'P', desc: 'Предыдущий трек' },
+  { key: 'S', desc: 'Случайное воспроизведение (Вкл/Выкл)' },
+  { key: 'R', desc: 'Повтор трека (Вкл/Выкл)' },
+  { key: 'F', desc: 'Полноэкранный режим визуализатора' },
+  { key: 'Esc', desc: 'Закрыть открытое окно' },
 ];
 
 export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen, onClose }) => {
@@ -39,13 +39,14 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ 
               <Keyboard className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold font-mono text-white">Keyboard Hotkeys</h3>
-              <p className="text-[11px] text-neutral-400 font-mono">Quick player controls</p>
+              <h3 className="text-sm font-bold font-mono text-white">Горячие клавиши</h3>
+              <p className="text-[11px] text-neutral-400 font-mono">Быстрое управление плеером</p>
             </div>
           </div>
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
+            title="Закрыть (Esc)"
           >
             <X className="w-4 h-4" />
           </button>

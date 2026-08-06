@@ -27,16 +27,25 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     let animationFrameId: number;
     let phase = 0;
 
+    const palette = {
+      primary: '#e4e4e7',
+      secondary: '#a1a1aa',
+      accent: '#71717a',
+      glow: 'rgba(255, 255, 255, 0.25)',
+      peak: '#ffffff',
+      particles: ['#ffffff', '#e4e4e7', '#a1a1aa', '#71717a'],
+    };
+
     // Persistent particle array for particle mode
-    const particleCount = 40;
+    const particleCount = 45;
     const particles = Array.from({ length: particleCount }, () => ({
       x: Math.random(),
       y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.0018,
-      vy: (Math.random() - 0.5) * 0.0018,
-      size: Math.random() * 2 + 1,
-      baseAlpha: Math.random() * 0.35 + 0.2,
-      color: Math.random() > 0.4 ? '#d4d4d8' : '#a1a1aa',
+      vx: (Math.random() - 0.5) * 0.002,
+      vy: (Math.random() - 0.5) * 0.002,
+      size: Math.random() * 2.5 + 1,
+      baseAlpha: Math.random() * 0.4 + 0.2,
+      color: palette.particles[Math.floor(Math.random() * palette.particles.length)],
     }));
 
     // Dynamic sizing with ResizeObserver
@@ -74,10 +83,10 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
 
       phase += 0.035;
 
-      // Clear canvas with subtle background
+      // Clear canvas
       ctx.clearRect(0, 0, width, height);
 
-      // 1. MODE: BARS (Monochrome Silver/White Spectrum)
+      // 1. MODE: BARS
       if (activeMode === 'bars') {
         const barCount = 32;
         const barWidth = (width / barCount) * 0.72;
@@ -99,36 +108,35 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
           const x = gap + i * (barWidth + gap);
           const y = height - barHeight - 4;
 
-          // Monochrome Gradient fill (softer silver -> zinc -> dark zinc)
           const grad = ctx.createLinearGradient(0, y, 0, height);
-          grad.addColorStop(0, '#e4e4e7');
-          grad.addColorStop(0.4, '#a1a1aa');
-          grad.addColorStop(1, '#27272a');
+          grad.addColorStop(0, palette.primary);
+          grad.addColorStop(0.5, palette.secondary);
+          grad.addColorStop(1, 'rgba(10, 10, 15, 0.2)');
 
           ctx.fillStyle = grad;
           ctx.beginPath();
-          ctx.roundRect(x, y, barWidth, barHeight, [2, 2, 0, 0]);
+          ctx.roundRect(x, y, barWidth, barHeight, [3, 3, 0, 0]);
           ctx.fill();
 
-          // Peak cap in soft zinc
-          ctx.fillStyle = '#e4e4e7';
+          // Peak cap
+          ctx.fillStyle = palette.peak;
           ctx.fillRect(x, Math.max(0, y - 2), barWidth, 1.5);
         }
       }
 
-      // 2. MODE: WAVEFORM (Monochrome Oscilloscope)
+      // 2. MODE: WAVEFORM
       else if (activeMode === 'waveform') {
         ctx.beginPath();
         const sliceWidth = width / (bufferLength - 1);
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5;
 
         const grad = ctx.createLinearGradient(0, 0, width, 0);
-        grad.addColorStop(0, '#71717a');
-        grad.addColorStop(0.5, '#d4d4d8');
-        grad.addColorStop(1, '#71717a');
+        grad.addColorStop(0, palette.accent);
+        grad.addColorStop(0.5, palette.primary);
+        grad.addColorStop(1, palette.secondary);
         ctx.strokeStyle = grad;
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = 'rgba(212, 212, 216, 0.25)';
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = palette.glow;
 
         let x = 0;
         for (let i = 0; i < bufferLength; i++) {
@@ -155,11 +163,11 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
         // Subtle mirror glow under baseline
         ctx.lineTo(width, height);
         ctx.lineTo(0, height);
-        ctx.fillStyle = 'rgba(212, 212, 216, 0.02)';
+        ctx.fillStyle = palette.glow;
         ctx.fill();
       }
 
-      // 3. MODE: RADIAL (Monochrome Circular Pulse)
+      // 3. MODE: RADIAL
       else if (activeMode === 'radial') {
         const centerX = width / 2;
         const centerY = height / 2;
@@ -175,11 +183,14 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
 
         ctx.beginPath();
         ctx.arc(centerX, centerY, baseRadius * (0.85 + avgEnergy * 0.25), 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(212, 212, 216, 0.05)';
+        ctx.fillStyle = palette.glow;
         ctx.fill();
-        ctx.strokeStyle = '#d4d4d8';
-        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = palette.primary;
+        ctx.lineWidth = 2;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = palette.glow;
         ctx.stroke();
+        ctx.shadowBlur = 0;
 
         // Radiating rays
         for (let i = 0; i < rayCount; i++) {
@@ -205,13 +216,13 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
-          ctx.strokeStyle = i % 2 === 0 ? '#d4d4d8' : '#71717a';
+          ctx.strokeStyle = i % 2 === 0 ? palette.primary : palette.secondary;
           ctx.lineWidth = 1.5;
           ctx.stroke();
         }
       }
 
-      // 4. MODE: PARTICLES (Monochrome Cosmic Nebula)
+      // 4. MODE: PARTICLES (Cosmic Nebula)
       else if (activeMode === 'particles') {
         let bassEnergy = 0;
         if (hasRealData) {
@@ -244,12 +255,12 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
             const dx = (p.x - p2.x) * width;
             const dy = (p.y - p2.y) * height;
             const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 70) {
+            if (dist < 75) {
               ctx.beginPath();
               ctx.moveTo(px, py);
               ctx.lineTo(p2.x * width, p2.y * height);
-              ctx.strokeStyle = '#d4d4d8';
-              ctx.globalAlpha = (1 - dist / 70) * 0.12 * (1 + bassEnergy);
+              ctx.strokeStyle = palette.primary;
+              ctx.globalAlpha = (1 - dist / 75) * 0.18 * (1 + bassEnergy);
               ctx.lineWidth = 1;
               ctx.stroke();
             }
@@ -268,7 +279,7 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
   }, [analyserNode, isPlaying, activeMode]);
 
   return (
-    <div className={`relative overflow-hidden rounded-xl bg-neutral-950 border border-neutral-800/70 ${className}`}>
+    <div className={`relative overflow-hidden rounded-xl bg-black/40 border border-white/10 ${className}`}>
       <canvas
         ref={canvasRef}
         className="w-full h-full block"

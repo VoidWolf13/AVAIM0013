@@ -9,12 +9,12 @@ interface AudioEqualizerModalProps {
 }
 
 const PRESETS: { id: EQPreset; label: string; desc: string }[] = [
-  { id: 'flat', label: 'Flat', desc: 'Balanced master sound' },
-  { id: 'bass-boost', label: 'Bass Boost', desc: 'Deep low sub frequencies' },
-  { id: 'ambient-spatial', label: 'Spatial', desc: 'Airy highs and wide depth' },
-  { id: 'cyber-treble', label: 'Treble', desc: 'Crisp synth leads & transients' },
-  { id: 'lofi-warmth', label: 'Lo-Fi', desc: 'Warm saturated mids' },
-  { id: 'vocal-clarity', label: 'Clarity', desc: 'Elevated vocal & lead presence' },
+  { id: 'flat', label: 'Стандарт', desc: 'Сбалансированное звучание' },
+  { id: 'bass-boost', label: 'Бас-буст', desc: 'Усиление низких частот' },
+  { id: 'ambient-spatial', label: 'Объёмный', desc: 'Воздушные верха и глубина' },
+  { id: 'cyber-treble', label: 'Высокие', desc: 'Четкие синтезаторные верха' },
+  { id: 'lofi-warmth', label: 'Lo-Fi', desc: 'Теплые насыщенные средние частоты' },
+  { id: 'vocal-clarity', label: 'Чистый', desc: 'Акцент на вокал и солирующие партии' },
 ];
 
 export const AudioEqualizerModal: React.FC<AudioEqualizerModalProps> = ({ isOpen, onClose }) => {
@@ -40,14 +40,15 @@ export const AudioEqualizerModal: React.FC<AudioEqualizerModalProps> = ({ isOpen
               <Sliders className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold font-mono text-white">Audio Equalizer</h3>
-              <p className="text-[11px] text-neutral-400 font-mono">Web Audio 3-Band Parametric Filter</p>
+              <h3 className="text-sm font-bold font-mono text-white">Эквалайзер звука</h3>
+              <p className="text-[11px] text-neutral-400 font-mono">3-полосный параметрический фильтр Web Audio</p>
             </div>
           </div>
           <button
             id="close-eq-modal"
             onClick={onClose}
             className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
+            title="Закрыть (Esc)"
           >
             <X className="w-4 h-4" />
           </button>
@@ -56,13 +57,14 @@ export const AudioEqualizerModal: React.FC<AudioEqualizerModalProps> = ({ isOpen
         {/* Preset Selector */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
-            <span>Sound Profiles</span>
+            <span>Звуковые профили</span>
             <button
               onClick={() => setEQPreset('flat')}
               className="flex items-center gap-1 text-neutral-300 hover:text-white transition text-[11px]"
+              title="Сбросить эквалайзер на стандартное звучание"
             >
               <RotateCcw className="w-3 h-3" />
-              Reset Flat
+              Сброс (Flat)
             </button>
           </div>
           <div className="grid grid-cols-3 gap-1.5">
@@ -73,6 +75,7 @@ export const AudioEqualizerModal: React.FC<AudioEqualizerModalProps> = ({ isOpen
                   key={p.id}
                   id={`preset-${p.id}`}
                   onClick={() => setEQPreset(p.id)}
+                  title={p.desc}
                   className={`p-2 rounded-lg text-center border transition text-xs flex flex-col items-center justify-center ${
                     isActive
                       ? 'bg-neutral-800 border-neutral-600 text-white font-semibold'
@@ -91,9 +94,9 @@ export const AudioEqualizerModal: React.FC<AudioEqualizerModalProps> = ({ isOpen
           {/* Bass Band */}
           <div className="space-y-1">
             <div className="flex justify-between text-xs font-mono">
-              <span className="text-neutral-300">Bass (180 Hz)</span>
+              <span className="text-neutral-300">Бас (180 Гц)</span>
               <span className="text-neutral-400">
-                {eqSettings.bass > 0 ? `+${eqSettings.bass}` : eqSettings.bass} dB
+                {eqSettings.bass > 0 ? `+${eqSettings.bass}` : eqSettings.bass} дБ
               </span>
             </div>
             <input
@@ -103,6 +106,7 @@ export const AudioEqualizerModal: React.FC<AudioEqualizerModalProps> = ({ isOpen
               step="1"
               value={eqSettings.bass}
               onChange={(e) => setCustomEQ('bass', parseFloat(e.target.value))}
+              title={`Низкие частоты: ${eqSettings.bass > 0 ? `+${eqSettings.bass}` : eqSettings.bass} дБ`}
               className="w-full h-1 bg-neutral-800 rounded-full appearance-none cursor-pointer accent-white focus:outline-none"
             />
           </div>
@@ -110,9 +114,9 @@ export const AudioEqualizerModal: React.FC<AudioEqualizerModalProps> = ({ isOpen
           {/* Mid Band */}
           <div className="space-y-1">
             <div className="flex justify-between text-xs font-mono">
-              <span className="text-neutral-300">Mid (1.2 kHz)</span>
+              <span className="text-neutral-300">Средние (1.2 кГц)</span>
               <span className="text-neutral-400">
-                {eqSettings.mid > 0 ? `+${eqSettings.mid}` : eqSettings.mid} dB
+                {eqSettings.mid > 0 ? `+${eqSettings.mid}` : eqSettings.mid} дБ
               </span>
             </div>
             <input
@@ -122,6 +126,7 @@ export const AudioEqualizerModal: React.FC<AudioEqualizerModalProps> = ({ isOpen
               step="1"
               value={eqSettings.mid}
               onChange={(e) => setCustomEQ('mid', parseFloat(e.target.value))}
+              title={`Средние частоты: ${eqSettings.mid > 0 ? `+${eqSettings.mid}` : eqSettings.mid} дБ`}
               className="w-full h-1 bg-neutral-800 rounded-full appearance-none cursor-pointer accent-white focus:outline-none"
             />
           </div>
@@ -129,9 +134,9 @@ export const AudioEqualizerModal: React.FC<AudioEqualizerModalProps> = ({ isOpen
           {/* Treble Band */}
           <div className="space-y-1">
             <div className="flex justify-between text-xs font-mono">
-              <span className="text-neutral-300">Treble (6.5 kHz)</span>
+              <span className="text-neutral-300">Высокие (6.5 кГц)</span>
               <span className="text-neutral-400">
-                {eqSettings.treble > 0 ? `+${eqSettings.treble}` : eqSettings.treble} dB
+                {eqSettings.treble > 0 ? `+${eqSettings.treble}` : eqSettings.treble} дБ
               </span>
             </div>
             <input
@@ -141,6 +146,7 @@ export const AudioEqualizerModal: React.FC<AudioEqualizerModalProps> = ({ isOpen
               step="1"
               value={eqSettings.treble}
               onChange={(e) => setCustomEQ('treble', parseFloat(e.target.value))}
+              title={`Высокие частоты: ${eqSettings.treble > 0 ? `+${eqSettings.treble}` : eqSettings.treble} дБ`}
               className="w-full h-1 bg-neutral-800 rounded-full appearance-none cursor-pointer accent-white focus:outline-none"
             />
           </div>

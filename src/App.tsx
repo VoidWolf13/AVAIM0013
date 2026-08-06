@@ -3,13 +3,11 @@ import { AudioProvider, useAudio } from './context/AudioContext';
 import { Header } from './components/Header';
 import { PlayerControls } from './components/PlayerControls';
 import { TrackList } from './components/TrackList';
-import { Footer } from './components/Footer';
 import { AudioEqualizerModal } from './components/AudioEqualizerModal';
 import { SleepTimerModal } from './components/SleepTimerModal';
 import { ZenVisualizerModal } from './components/ZenVisualizerModal';
 import { TrackInfoModal } from './components/TrackInfoModal';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
-import { GitHubSyncModal } from './components/GitHubSyncModal';
 import { QueueDrawer } from './components/QueueDrawer';
 import { Toast } from './components/Toast';
 import { Track } from './types';
@@ -34,7 +32,6 @@ function MainApp() {
   const [isZenOpen, setIsZenOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isQueueOpen, setIsQueueOpen] = useState(false);
-  const [isGitHubSyncOpen, setIsGitHubSyncOpen] = useState(false);
   const [selectedTrackForInfo, setSelectedTrackForInfo] = useState<Track | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -98,13 +95,13 @@ function MainApp() {
         case 'S':
           e.preventDefault();
           setPlaybackMode(playbackMode === 'random' ? 'sequential' : 'random');
-          showToast(playbackMode === 'random' ? 'Shuffle Off' : 'Shuffle On');
+          showToast(playbackMode === 'random' ? 'Случайное воспроизведение: Выкл' : 'Случайное воспроизведение: Вкл');
           break;
         case 'r':
         case 'R':
           e.preventDefault();
           setPlaybackMode(playbackMode === 'loop' ? 'sequential' : 'loop');
-          showToast(playbackMode === 'loop' ? 'Repeat Off' : 'Repeat Track');
+          showToast(playbackMode === 'loop' ? 'Повтор трека: Выкл' : 'Повтор трека: Вкл');
           break;
         case 'f':
         case 'F':
@@ -117,7 +114,6 @@ function MainApp() {
           setIsZenOpen(false);
           setIsShortcutsOpen(false);
           setIsQueueOpen(false);
-          setIsGitHubSyncOpen(false);
           setSelectedTrackForInfo(null);
           break;
       }
@@ -128,20 +124,18 @@ function MainApp() {
   }, [togglePlayPause, seekRelative, volume, setVolume, toggleMute, playNext, playPrevious, playbackMode, setPlaybackMode]);
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-neutral-100 flex flex-col selection:bg-neutral-800 selection:text-white">
-      {/* Minimal Header */}
+    <div className="min-h-screen bg-[#09090b] text-neutral-100 flex flex-col selection:bg-neutral-800 selection:text-white transition-colors duration-300">
+      {/* Minimalist Top Header */}
       <Header
         onOpenEQ={() => setIsEQOpen(true)}
         onOpenZen={() => setIsZenOpen(true)}
         onOpenShortcuts={() => setIsShortcutsOpen(true)}
         onOpenQueue={() => setIsQueueOpen(true)}
-        onOpenGitHubSync={() => setIsGitHubSyncOpen(true)}
         onShowToast={showToast}
       />
 
-      {/* Main Content Area: Centered, Focused Audiophile Layout */}
-      <main className="flex-1 max-w-xl w-full mx-auto px-4 py-6 space-y-4">
-        {/* Core Centerpiece Player */}
+      {/* Main Content: Player Controls + Track List */}
+      <main className="flex-1 w-full max-w-xl mx-auto px-4 py-6 space-y-4">
         <PlayerControls
           onOpenEQ={() => setIsEQOpen(true)}
           onOpenSleep={() => setIsSleepOpen(true)}
@@ -150,11 +144,8 @@ function MainApp() {
           onOpenQueue={() => setIsQueueOpen(true)}
           onShowToast={showToast}
         />
-
-        {/* Collapsible Track Discography */}
         <TrackList
           onOpenTrackInfo={(track) => setSelectedTrackForInfo(track)}
-          onOpenGitHubSync={() => setIsGitHubSyncOpen(true)}
           onShowToast={showToast}
         />
       </main>
@@ -166,7 +157,7 @@ function MainApp() {
         isOpen={isZenOpen}
         onClose={() => setIsZenOpen(false)}
         onShare={() => {
-          showToast(`Copied audio URL for "${currentTrack.title}"`);
+          showToast(`Скопирована ссылка на трек "${currentTrack.title}"`);
         }}
       />
       <TrackInfoModal
@@ -175,17 +166,9 @@ function MainApp() {
         onClose={() => setSelectedTrackForInfo(null)}
         onShowToast={showToast}
       />
-      <GitHubSyncModal
-        isOpen={isGitHubSyncOpen}
-        onClose={() => setIsGitHubSyncOpen(false)}
-        onShowToast={showToast}
-      />
       <KeyboardShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} />
       <QueueDrawer isOpen={isQueueOpen} onClose={() => setIsQueueOpen(false)} />
       <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
-
-      {/* Minimal Footer */}
-      <Footer />
     </div>
   );
 }
@@ -197,3 +180,4 @@ export default function App() {
     </AudioProvider>
   );
 }
+

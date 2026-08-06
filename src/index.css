@@ -56,3 +56,22 @@ input[type="range"] {
   animation: pulse-glow 4s ease-in-out infinite;
 }
 
+/* Rhombus 13 Dots Pulsing Animation (constant size, smooth soft opacity only) */
+@keyframes rhombus-dot-pulse {
+  0%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%);
+  }
+  50% {
+    opacity: var(--max-opacity, 0.45);
+    transform: translate(-50%, -50%);
+  }
+}
+
+.animate-rhombus-dot {
+  animation-name: rhombus-dot-pulse;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  will-change: opacity;
+}
+

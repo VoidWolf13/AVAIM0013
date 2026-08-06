@@ -6,8 +6,10 @@ import {
   getStoredGitHubConfig,
   saveGitHubConfig,
   getCachedGitHubTracks,
+  cacheGitHubTracks,
   DEFAULT_GITHUB_CONFIG,
 } from '../utils/githubScanner';
+import { analyzeAudioUrl, AudioAnalysisResult } from '../utils/audioGenreClassifier';
 
 interface AudioContextType {
   tracks: Track[];
@@ -34,6 +36,7 @@ interface AudioContextType {
   githubSyncError: string | null;
   githubConfig: GitHubSyncConfig;
   lastSyncTime: Date | null;
+  isAnalyzingTracks: boolean;
   
   // Actions
   playTrack: (trackOrIndex: Track | number) => void;
@@ -58,6 +61,8 @@ interface AudioContextType {
   syncWithGitHub: (customConfig?: GitHubSyncConfig) => Promise<{ success: boolean; count?: number; error?: string }>;
   updateGitHubConfig: (config: GitHubSyncConfig) => void;
   resetToDefaultTracks: () => void;
+  analyzeTrackGenre: (trackId: number) => Promise<AudioAnalysisResult | undefined>;
+  analyzeAllTracks: () => Promise<void>;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -73,13 +78,13 @@ const EQ_PRESETS: Record<EQPreset, { bass: number; mid: number; treble: number }
 
 export const EMPTY_TRACK: Track = {
   id: 0,
-  title: 'No audio loaded',
+  title: 'Аудио не загружено',
   filename: '',
   format: 'mp3',
   category: 'ambient',
-  moodTag: 'Waiting for music',
+  moodTag: 'Ожидание музыки',
   durationEst: '0:00',
-  description: 'Upload audio files to the music/ folder of your GitHub repository (VoidWolf13/AVAIM0013) and click Sync.',
+  description: 'Загрузите аудиофайлы в папку music/ вашего репозитория GitHub (VoidWolf13/AVAIM0013) и нажмите «Синхронизация».',
   bitrate: '—',
   sampleRate: '—',
   bpm: 0,
@@ -95,6 +100,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isSyncingGitHub, setIsSyncingGitHub] = useState<boolean>(false);
   const [githubSyncError, setGithubSyncError] = useState<string | null>(null);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+  const [isAnalyzingTracks, setIsAnalyzingTracks] = useState<boolean>(false);
 
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -112,7 +118,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return (saved as PlaybackMode) || 'sequential';
   });
   const [playbackRate, setPlaybackRateState] = useState<number>(1.0);
-  const [visualizerMode, setVisualizerMode] = useState<VisualizerMode>('bars');
+  const [visualizerMode, setVisualizerMode] = useState<VisualizerMode>('particles');
   
   const [eqSettings, setEqSettings] = useState<EQSettings>({
     bass: 0,
@@ -279,6 +285,29 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       await audio.play();
       setIsPlaying(true);
+
+      // Auto-analyze audio signal in background if not yet analyzed
+      if (!targetTrack.isAnalyzed && audioUrl) {
+        analyzeAudioUrl(audioUrl).then(result => {
+          setTracks(prev => {
+            const updated = prev.map(t => {
+              if (t.id === targetTrack.id) {
+                return {
+                  ...t,
+                  category: result.genre,
+                  moodTag: result.moodTag,
+                  description: result.description,
+                  bpm: result.detectedBpm,
+                  isAnalyzed: true,
+                };
+              }
+              return t;
+            });
+            cacheGitHubTracks(updated);
+            return updated;
+          });
+        }).catch(err => console.warn('Background audio analysis notice:', err));
+      }
     } catch (err) {
       console.warn('Error starting playback for track:', targetTrack.title, err);
       setIsPlaying(false);
@@ -528,6 +557,76 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setQueue([]);
   }, []);
 
+  // Automatic Audio Signal Genre Analysis for a single track
+  const analyzeTrackGenre = useCallback(async (trackId: number) => {
+    const target = tracks.find(t => t.id === trackId);
+    if (!target) return;
+    const audioUrl = getTrackAudioUrl(target);
+    if (!audioUrl) return;
+
+    try {
+      const result = await analyzeAudioUrl(audioUrl);
+      setTracks(prev => {
+        const updated = prev.map(t => {
+          if (t.id === trackId) {
+            return {
+              ...t,
+              category: result.genre,
+              moodTag: result.moodTag,
+              description: result.description,
+              bpm: result.detectedBpm,
+              isAnalyzed: true,
+            };
+          }
+          return t;
+        });
+        cacheGitHubTracks(updated);
+        return updated;
+      });
+      return result;
+    } catch (err) {
+      console.warn('Audio genre analysis failed:', err);
+    }
+  }, [tracks]);
+
+  // Batch analysis for all tracks in playlist
+  const analyzeAllTracks = useCallback(async () => {
+    if (tracks.length === 0 || isAnalyzingTracks) return;
+    setIsAnalyzingTracks(true);
+
+    try {
+      for (const track of tracks) {
+        const audioUrl = getTrackAudioUrl(track);
+        if (audioUrl) {
+          try {
+            const result = await analyzeAudioUrl(audioUrl);
+            setTracks(prev => {
+              const updated = prev.map(t => {
+                if (t.id === track.id) {
+                  return {
+                    ...t,
+                    category: result.genre,
+                    moodTag: result.moodTag,
+                    description: result.description,
+                    bpm: result.detectedBpm,
+                    isAnalyzed: true,
+                  };
+                }
+                return t;
+              });
+              cacheGitHubTracks(updated);
+              return updated;
+            });
+          } catch (e) {
+            console.warn('Batch track analysis error:', track.title, e);
+          }
+        }
+      }
+    } finally {
+      setIsAnalyzingTracks(false);
+    }
+  }, [tracks, isAnalyzingTracks]);
+
   // Audio Event Listeners Setup
   useEffect(() => {
     const audio = audioRef.current;
@@ -669,6 +768,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         githubSyncError,
         githubConfig,
         lastSyncTime,
+        isAnalyzingTracks,
         playTrack,
         togglePlayPause,
         playNext,
@@ -691,6 +791,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         syncWithGitHub,
         updateGitHubConfig,
         resetToDefaultTracks,
+        analyzeTrackGenre,
+        analyzeAllTracks,
       }}
     >
       {/* Hidden core audio element */}

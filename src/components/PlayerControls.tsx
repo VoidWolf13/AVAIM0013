@@ -16,7 +16,6 @@ import {
   VolumeX,
   Volume1,
   Heart,
-  Download,
   Info,
   Radio,
   Activity,
@@ -69,24 +68,31 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
   const audioUrl = getTrackAudioUrl(currentTrack);
   const bufferedPercent = duration ? (buffered / duration) * 100 : 0;
 
-  const cyclePlaybackMode = () => {
-    if (playbackMode === 'sequential') {
-      setPlaybackMode('random');
-      onShowToast('Shuffle On');
-    } else if (playbackMode === 'random') {
-      setPlaybackMode('loop');
-      onShowToast('Repeat Track');
-    } else {
+  const toggleShuffle = () => {
+    if (playbackMode === 'random') {
       setPlaybackMode('sequential');
-      onShowToast('Sequential Play');
+      onShowToast('Случайный порядок: Выкл');
+    } else {
+      setPlaybackMode('random');
+      onShowToast('Случайный порядок: Вкл');
+    }
+  };
+
+  const toggleRepeat = () => {
+    if (playbackMode === 'loop') {
+      setPlaybackMode('sequential');
+      onShowToast('Повтор трека: Выкл');
+    } else {
+      setPlaybackMode('loop');
+      onShowToast('Повтор трека: Вкл');
     }
   };
 
   const visModes: { id: VisualizerMode; label: string; icon: React.ReactNode }[] = [
-    { id: 'bars', label: 'Spectrum', icon: <Radio className="w-3.5 h-3.5" /> },
-    { id: 'waveform', label: 'Waveform', icon: <Activity className="w-3.5 h-3.5" /> },
-    { id: 'radial', label: 'Radial', icon: <Disc3 className="w-3.5 h-3.5" /> },
-    { id: 'particles', label: 'Cosmic', icon: <Sparkles className="w-3.5 h-3.5" /> },
+    { id: 'bars', label: 'Спектр', icon: <Radio className="w-3.5 h-3.5" /> },
+    { id: 'waveform', label: 'Волна', icon: <Activity className="w-3.5 h-3.5" /> },
+    { id: 'radial', label: 'Круг', icon: <Disc3 className="w-3.5 h-3.5" /> },
+    { id: 'particles', label: 'Космос', icon: <Sparkles className="w-3.5 h-3.5" /> },
   ];
 
   return (
@@ -114,7 +120,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
                 ? 'text-neutral-200 bg-neutral-800 border border-neutral-700'
                 : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
             }`}
-            title={sleepTimerRemaining !== null ? `Timer: ${formatTime(sleepTimerRemaining)}` : 'Sleep Timer'}
+            title={sleepTimerRemaining !== null ? `Таймер сна: ${formatTime(sleepTimerRemaining)}` : 'Таймер сна'}
           >
             <Moon className="w-3.5 h-3.5" />
           </button>
@@ -123,7 +129,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           <button
             onClick={onOpenEQ}
             className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition"
-            title="Audio Equalizer"
+            title="Эквалайзер звука"
           >
             <Sliders className="w-3.5 h-3.5" />
           </button>
@@ -132,7 +138,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           <button
             onClick={onOpenTrackInfo}
             className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition"
-            title="Track Details"
+            title="Информация о треке"
           >
             <Info className="w-3.5 h-3.5" />
           </button>
@@ -146,7 +152,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
                 ? 'text-rose-400'
                 : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
             }`}
-            title="Favorite"
+            title={isFavorite(currentTrack.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
           >
             <Heart className={`w-3.5 h-3.5 ${isFavorite(currentTrack.id) ? 'fill-rose-400' : ''}`} />
           </button>
@@ -217,33 +223,33 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
 
       {/* Centerpiece Transport Controls */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-neutral-800/70">
-        {/* Left: Playback Mode (Shuffle / Repeat) */}
-        <div className="flex items-center gap-2 order-2 sm:order-1">
+        {/* Left: Playback Modes (Repeat & Shuffle side by side) */}
+        <div className="flex items-center gap-1.5 order-2 sm:order-1">
+          {/* Repeat Button */}
           <button
-            onClick={cyclePlaybackMode}
+            onClick={toggleRepeat}
             className={`p-2 rounded-lg text-xs transition ${
-              playbackMode !== 'sequential'
-                ? 'text-neutral-200 bg-neutral-800 border border-neutral-700'
-                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
+              playbackMode === 'loop'
+                ? 'text-white bg-neutral-800 border border-neutral-600 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
             }`}
-            title={`Playback: ${playbackMode}`}
+            title={playbackMode === 'loop' ? 'Повтор трека: Вкл (R)' : 'Повтор трека: Выкл (R)'}
           >
-            {playbackMode === 'random' && <Shuffle className="w-4 h-4" />}
-            {playbackMode === 'loop' && <Repeat1 className="w-4 h-4" />}
-            {playbackMode === 'sequential' && <Repeat className="w-4 h-4" />}
+            {playbackMode === 'loop' ? <Repeat1 className="w-4 h-4 text-white" /> : <Repeat className="w-4 h-4" />}
           </button>
 
-          <a
-            href={audioUrl}
-            download={currentTrack.filename}
-            target="_blank"
-            rel="noreferrer"
-            onClick={() => onShowToast(`Downloading ${currentTrack.filename}...`)}
-            className="p-2 rounded-lg text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition"
-            title="Download Track"
+          {/* Shuffle Button (Случайное проигрывание) */}
+          <button
+            onClick={toggleShuffle}
+            className={`p-2 rounded-lg text-xs transition ${
+              playbackMode === 'random'
+                ? 'text-white bg-neutral-800 border border-neutral-600 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
+            }`}
+            title={playbackMode === 'random' ? 'Случайное воспроизведение: Вкл (S)' : 'Случайное воспроизведение: Выкл (S)'}
           >
-            <Download className="w-4 h-4" />
-          </a>
+            <Shuffle className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Center: Main Playback Controls */}
@@ -251,7 +257,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           <button
             onClick={playPrevious}
             className="p-2.5 text-neutral-400 hover:text-neutral-200 transition"
-            title="Previous (P)"
+            title="Предыдущий трек (P / ←)"
           >
             <SkipBack className="w-5 h-5" />
           </button>
@@ -259,7 +265,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           <button
             onClick={togglePlayPause}
             className="w-13 h-13 rounded-full bg-neutral-200 hover:bg-neutral-300 text-neutral-950 flex items-center justify-center transition transform active:scale-95 shadow-md"
-            title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
+            title={isPlaying ? 'Пауза (Пробел)' : 'Воспроизведение (Пробел)'}
           >
             {isPlaying ? (
               <Pause className="w-6 h-6 fill-current" />
@@ -271,7 +277,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           <button
             onClick={playNext}
             className="p-2.5 text-neutral-400 hover:text-neutral-200 transition"
-            title="Next (N)"
+            title="Следующий трек (N / →)"
           >
             <SkipForward className="w-5 h-5" />
           </button>
@@ -282,7 +288,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           <button
             onClick={toggleMute}
             className="p-1.5 text-neutral-400 hover:text-neutral-200 transition"
-            title="Mute (M)"
+            title={isMuted ? 'Включить звук (M)' : 'Выключить звук (M)'}
           >
             {isMuted || volume === 0 ? (
               <VolumeX className="w-4 h-4 text-rose-400" />
@@ -299,6 +305,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
             step="0.02"
             value={isMuted ? 0 : volume}
             onChange={(e) => setVolume(parseFloat(e.target.value))}
+            title={`Громкость: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
             className="w-20 h-1 bg-neutral-800 rounded-full appearance-none cursor-pointer accent-neutral-300 focus:outline-none"
           />
         </div>

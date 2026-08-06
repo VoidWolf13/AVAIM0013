@@ -19,6 +19,7 @@ export const Toast: React.FC<ToastProps> = ({ message, onClose }) => {
       <button
         onClick={onClose}
         className="ml-1 text-neutral-400 hover:text-white transition"
+        title="Закрыть"
       >
         <X className="w-3.5 h-3.5" />
       </button>

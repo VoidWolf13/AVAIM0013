@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAudio } from '../context/AudioContext';
 import { VisualizerCanvas } from './VisualizerCanvas';
-import { VisualizerMode } from '../types';
+import { Track, VisualizerMode } from '../types';
 import {
   Play,
   Pause,
@@ -82,10 +82,10 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
   if (!isOpen) return null;
 
   const visualizerModes: { id: VisualizerMode; label: string; icon: React.ReactNode }[] = [
-    { id: 'radial', label: 'Radial Pulse', icon: <Disc3 className="w-4 h-4" /> },
-    { id: 'bars', label: 'Neon Bars', icon: <Radio className="w-4 h-4" /> },
-    { id: 'waveform', label: 'Oscilloscope', icon: <Activity className="w-4 h-4" /> },
-    { id: 'particles', label: 'Void Nebula', icon: <Sparkles className="w-4 h-4" /> },
+    { id: 'radial', label: 'Круговой импульс', icon: <Disc3 className="w-4 h-4" /> },
+    { id: 'bars', label: 'Спектральные полосы', icon: <Radio className="w-4 h-4" /> },
+    { id: 'waveform', label: 'Осциллограф', icon: <Activity className="w-4 h-4" /> },
+    { id: 'particles', label: 'Звездная туманность', icon: <Sparkles className="w-4 h-4" /> },
   ];
 
   return (
@@ -148,7 +148,7 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
           onClick={onClose}
           id="exit-zen-mode"
           className="p-2.5 rounded-full bg-neutral-900/80 border border-neutral-800 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 backdrop-blur-md transition"
-          title="Exit Fullscreen (Esc)"
+          title="Выйти из полноэкранного режима (Esc)"
         >
           <Minimize2 className="w-5 h-5" />
         </button>
@@ -187,6 +187,7 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
                 max={duration || 100}
                 value={currentTime}
                 onChange={(e) => seek(parseFloat(e.target.value))}
+                title="Перемотка трека"
                 className="w-full h-2 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-neutral-300"
               />
             </div>
@@ -207,14 +208,14 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
                     ? 'text-rose-400 bg-rose-500/10'
                     : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
                 }`}
-                title="Favorite"
+                title={isFavorite(currentTrack.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
               >
                 <Heart className={`w-4 h-4 ${isFavorite(currentTrack.id) ? 'fill-rose-400' : ''}`} />
               </button>
               <button
                 onClick={onShare}
                 className="p-2 rounded-xl text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition"
-                title="Share track"
+                title="Поделиться ссылкой на трек"
               >
                 <Share2 className="w-4 h-4" />
               </button>
@@ -225,7 +226,7 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
               <button
                 onClick={playPrevious}
                 className="p-2.5 rounded-full text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition"
-                title="Previous track"
+                title="Предыдущий трек (P / ←)"
               >
                 <SkipBack className="w-5 h-5" />
               </button>
@@ -233,14 +234,14 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
                 onClick={togglePlayPause}
                 id="zen-play-pause-btn"
                 className="p-4 rounded-full bg-neutral-200 hover:bg-neutral-300 text-neutral-950 shadow-lg transition transform active:scale-95"
-                title={isPlaying ? 'Pause' : 'Play'}
+                title={isPlaying ? 'Пауза (Пробел)' : 'Воспроизведение (Пробел)'}
               >
                 {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-0.5" />}
               </button>
               <button
                 onClick={playNext}
                 className="p-2.5 rounded-full text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition"
-                title="Next track"
+                title="Следующий трек (N / →)"
               >
                 <SkipForward className="w-5 h-5" />
               </button>
@@ -251,6 +252,7 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
               <button
                 onClick={toggleMute}
                 className="p-2 text-neutral-400 hover:text-neutral-200 transition"
+                title={isMuted ? 'Включить звук (M)' : 'Выключить звук (M)'}
               >
                 {isMuted || volume === 0 ? (
                   <VolumeX className="w-4 h-4 text-rose-400" />
@@ -265,6 +267,7 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
                 step="0.01"
                 value={isMuted ? 0 : volume}
                 onChange={(e) => setVolume(parseFloat(e.target.value))}
+                title={`Громкость: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
                 className="w-20 sm:w-28 h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-neutral-300"
               />
             </div>
