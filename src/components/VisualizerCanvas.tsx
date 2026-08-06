@@ -171,42 +171,24 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
       else if (activeMode === 'radial') {
         const centerX = width / 2;
         const centerY = height / 2;
-        const baseRadius = Math.min(centerX, centerY) * 0.45;
-        const rayCount = 44;
+        const baseRadius = Math.min(centerX, centerY) * 0.42;
+        const rayCount = 48;
 
-        let avgEnergy = 0;
-        if (hasRealData) {
-          avgEnergy = dataArray.slice(0, 16).reduce((a, b) => a + b, 0) / (16 * 255);
-        } else if (isPlaying) {
-          avgEnergy = 0.3 + 0.2 * Math.sin(phase * 2);
-        }
-
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, baseRadius * (0.85 + avgEnergy * 0.25), 0, Math.PI * 2);
-        ctx.fillStyle = palette.glow;
-        ctx.fill();
-        ctx.strokeStyle = palette.primary;
-        ctx.lineWidth = 2;
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = palette.glow;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-
-        // Radiating rays
+        // Draw radiating rays first (strictly outward from outer rim)
         for (let i = 0; i < rayCount; i++) {
-          const angle = (i / rayCount) * Math.PI * 2 + phase * 0.18;
+          const angle = (i / rayCount) * Math.PI * 2 + phase * 0.12;
           let mag = 0;
           if (hasRealData) {
             const dataIndex = Math.floor((i / rayCount) * (bufferLength * 0.6));
             mag = dataArray[dataIndex] / 255;
           } else if (isPlaying) {
-            mag = 0.2 + 0.25 * Math.sin(phase + i * 0.4);
+            mag = 0.15 + 0.15 * Math.sin(phase + i * 0.35);
           } else {
-            mag = 0.05 + 0.02 * Math.sin(phase + i * 0.2);
+            mag = 0.04 + 0.02 * Math.sin(phase + i * 0.2);
           }
 
-          const r1 = baseRadius;
-          const r2 = baseRadius + mag * (Math.min(centerX, centerY) * 0.48);
+          const r1 = baseRadius + 4;
+          const r2 = baseRadius + 4 + mag * (Math.min(centerX, centerY) * 0.42);
 
           const x1 = centerX + Math.cos(angle) * r1;
           const y1 = centerY + Math.sin(angle) * r1;
@@ -220,6 +202,26 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
           ctx.lineWidth = 1.5;
           ctx.stroke();
         }
+
+        // Draw central solid circle (Radius remains perfectly stable, no size distortion)
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, baseRadius, 0, Math.PI * 2);
+        ctx.fillStyle = '#0a0a0c';
+        ctx.fill();
+
+        ctx.strokeStyle = palette.primary;
+        ctx.lineWidth = 2;
+        ctx.shadowBlur = isPlaying ? 6 : 2;
+        ctx.shadowColor = palette.glow;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Subtle inner ring
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, baseRadius * 0.5, 0, Math.PI * 2);
+        ctx.strokeStyle = palette.secondary;
+        ctx.lineWidth = 1;
+        ctx.stroke();
       }
 
       // 4. MODE: PARTICLES (Cosmic Nebula)
@@ -228,12 +230,12 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
         if (hasRealData) {
           bassEnergy = dataArray.slice(0, 8).reduce((a, b) => a + b, 0) / (8 * 255);
         } else if (isPlaying) {
-          bassEnergy = 0.25 + 0.2 * Math.sin(phase * 1.5);
+          bassEnergy = 0.15 + 0.1 * Math.sin(phase * 1.2);
         }
 
         particles.forEach((p, idx) => {
-          p.x += p.vx * (1 + bassEnergy * 2);
-          p.y += p.vy * (1 + bassEnergy * 2);
+          p.x += p.vx * (1 + bassEnergy * 0.8);
+          p.y += p.vy * (1 + bassEnergy * 0.8);
 
           if (p.x < 0) p.x = 1;
           if (p.x > 1) p.x = 0;
@@ -242,12 +244,13 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
 
           const px = p.x * width;
           const py = p.y * height;
-          const currentSize = p.size * (1 + bassEnergy * 1.5);
+          // Circles maintain constant size, subtle opacity pulsation only
+          const fixedSize = p.size;
 
           ctx.beginPath();
-          ctx.arc(px, py, currentSize, 0, Math.PI * 2);
+          ctx.arc(px, py, fixedSize, 0, Math.PI * 2);
           ctx.fillStyle = p.color;
-          ctx.globalAlpha = Math.min(1, p.baseAlpha + bassEnergy * 0.5);
+          ctx.globalAlpha = Math.min(0.9, p.baseAlpha + bassEnergy * 0.25);
           ctx.fill();
 
           for (let j = idx + 1; j < particles.length; j++) {
@@ -255,12 +258,12 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
             const dx = (p.x - p2.x) * width;
             const dy = (p.y - p2.y) * height;
             const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 75) {
+            if (dist < 70) {
               ctx.beginPath();
               ctx.moveTo(px, py);
               ctx.lineTo(p2.x * width, p2.y * height);
               ctx.strokeStyle = palette.primary;
-              ctx.globalAlpha = (1 - dist / 75) * 0.18 * (1 + bassEnergy);
+              ctx.globalAlpha = (1 - dist / 70) * 0.15 * (1 + bassEnergy * 0.5);
               ctx.lineWidth = 1;
               ctx.stroke();
             }

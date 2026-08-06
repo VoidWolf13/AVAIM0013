@@ -7,6 +7,7 @@ import {
   saveGitHubConfig,
   getCachedGitHubTracks,
   cacheGitHubTracks,
+  saveCustomTrackMetadata,
   DEFAULT_GITHUB_CONFIG,
 } from '../utils/githubScanner';
 import { analyzeAudioUrl, AudioAnalysisResult } from '../utils/audioGenreClassifier';
@@ -29,7 +30,6 @@ interface AudioContextType {
   sleepTimerRemaining: number | null;
   sleepTimerDuration: number | null;
   favorites: number[];
-  queue: Track[];
   analyserNode: AnalyserNode | null;
   audioElement: HTMLAudioElement | null;
   isSyncingGitHub: boolean;
@@ -55,12 +55,10 @@ interface AudioContextType {
   setSleepTimer: (minutes: number | null) => void;
   toggleFavorite: (trackId: number) => void;
   isFavorite: (trackId: number) => boolean;
-  addToQueue: (track: Track) => void;
-  removeFromQueue: (index: number) => void;
-  clearQueue: () => void;
   syncWithGitHub: (customConfig?: GitHubSyncConfig) => Promise<{ success: boolean; count?: number; error?: string }>;
   updateGitHubConfig: (config: GitHubSyncConfig) => void;
   resetToDefaultTracks: () => void;
+  updateTrackMetadata: (trackId: number, metadata: { moodTag?: string; category?: string; description?: string; bpm?: number }) => void;
   analyzeTrackGenre: (trackId: number) => Promise<AudioAnalysisResult | undefined>;
   analyzeAllTracks: () => Promise<void>;
 }
@@ -138,8 +136,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return [];
     }
   });
-
-  const [queue, setQueue] = useState<Track[]>([]);
 
   // Refs for Web Audio API & Audio Element
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -350,14 +346,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Play Next
   const playNext = useCallback(() => {
-    // Check if there is an item in the queue first
-    if (queue.length > 0) {
-      const nextFromQueue = queue[0];
-      setQueue(prev => prev.slice(1));
-      playTrack(nextFromQueue);
-      return;
-    }
-
     if (tracks.length === 0) return;
 
     if (playbackMode === 'random') {
@@ -370,7 +358,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const nextIndex = (currentTrackIndex + 1) % tracks.length;
       playTrack(nextIndex);
     }
-  }, [currentTrackIndex, playbackMode, playTrack, queue, tracks]);
+  }, [currentTrackIndex, playbackMode, playTrack, tracks]);
 
   // Play Previous
   const playPrevious = useCallback(() => {
@@ -544,19 +532,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return favorites.includes(trackId);
   }, [favorites]);
 
-  // Queue
-  const addToQueue = useCallback((track: Track) => {
-    setQueue(prev => [...prev, track]);
-  }, []);
-
-  const removeFromQueue = useCallback((index: number) => {
-    setQueue(prev => prev.filter((_, i) => i !== index));
-  }, []);
-
-  const clearQueue = useCallback(() => {
-    setQueue([]);
-  }, []);
-
   // Automatic Audio Signal Genre Analysis for a single track
   const analyzeTrackGenre = useCallback(async (trackId: number) => {
     const target = tracks.find(t => t.id === trackId);
@@ -589,43 +564,32 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [tracks]);
 
-  // Batch analysis for all tracks in playlist
-  const analyzeAllTracks = useCallback(async () => {
-    if (tracks.length === 0 || isAnalyzingTracks) return;
-    setIsAnalyzingTracks(true);
-
-    try {
-      for (const track of tracks) {
-        const audioUrl = getTrackAudioUrl(track);
-        if (audioUrl) {
-          try {
-            const result = await analyzeAudioUrl(audioUrl);
-            setTracks(prev => {
-              const updated = prev.map(t => {
-                if (t.id === track.id) {
-                  return {
-                    ...t,
-                    category: result.genre,
-                    moodTag: result.moodTag,
-                    description: result.description,
-                    bpm: result.detectedBpm,
-                    isAnalyzed: true,
-                  };
-                }
-                return t;
-              });
-              cacheGitHubTracks(updated);
-              return updated;
-            });
-          } catch (e) {
-            console.warn('Batch track analysis error:', track.title, e);
-          }
+  // User custom metadata update (genre, mood, description, bpm)
+  const updateTrackMetadata = useCallback((trackId: number, metadata: { moodTag?: string; category?: string; description?: string; bpm?: number }) => {
+    setTracks(prev => {
+      const updated = prev.map(t => {
+        if (t.id === trackId) {
+          const updatedTrack = {
+            ...t,
+            moodTag: metadata.moodTag !== undefined ? metadata.moodTag : t.moodTag,
+            category: metadata.category !== undefined ? metadata.category : t.category,
+            description: metadata.description !== undefined ? metadata.description : t.description,
+            bpm: metadata.bpm !== undefined ? metadata.bpm : t.bpm,
+          };
+          saveCustomTrackMetadata(t.filename || t.title, {
+            moodTag: updatedTrack.moodTag,
+            category: updatedTrack.category,
+            description: updatedTrack.description,
+            bpm: updatedTrack.bpm,
+          });
+          return updatedTrack;
         }
-      }
-    } finally {
-      setIsAnalyzingTracks(false);
-    }
-  }, [tracks, isAnalyzingTracks]);
+        return t;
+      });
+      cacheGitHubTracks(updated);
+      return updated;
+    });
+  }, []);
 
   // Audio Event Listeners Setup
   useEffect(() => {
@@ -761,7 +725,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         sleepTimerRemaining,
         sleepTimerDuration,
         favorites,
-        queue,
         analyserNode: analyserRef.current,
         audioElement: audioRef.current,
         isSyncingGitHub,
@@ -785,14 +748,12 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setSleepTimer,
         toggleFavorite,
         isFavorite,
-        addToQueue,
-        removeFromQueue,
-        clearQueue,
         syncWithGitHub,
         updateGitHubConfig,
         resetToDefaultTracks,
+        updateTrackMetadata,
         analyzeTrackGenre,
-        analyzeAllTracks,
+        analyzeAllTracks: async () => {},
       }}
     >
       {/* Hidden core audio element */}

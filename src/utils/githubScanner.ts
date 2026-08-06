@@ -42,6 +42,27 @@ export function cacheGitHubTracks(tracks: Track[]): void {
   }
 }
 
+const STORAGE_KEY_CUSTOM_METADATA = 'avaim_custom_track_metadata';
+
+export function getCustomTrackMetadata(): Record<string, { moodTag?: string; category?: string; description?: string; bpm?: number }> {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_CUSTOM_METADATA);
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveCustomTrackMetadata(filenameOrId: string, metadata: { moodTag?: string; category?: string; description?: string; bpm?: number }): void {
+  try {
+    const current = getCustomTrackMetadata();
+    current[filenameOrId] = { ...current[filenameOrId], ...metadata };
+    localStorage.setItem(STORAGE_KEY_CUSTOM_METADATA, JSON.stringify(current));
+  } catch (err) {
+    console.warn('Failed to save custom track metadata:', err);
+  }
+}
+
 // Clean filename into human readable track title
 export function formatAudioTitle(filename: string): string {
   // Remove extension
@@ -57,46 +78,23 @@ export function formatAudioTitle(filename: string): string {
     .join(' ') || withoutExt;
 }
 
-// Infer category, moodTag and description from file name & extension
+// Clean category and format metadata from filename & extension
 export function inferMoodAndCategory(filename: string, format: string): {
   category: Track['category'];
   moodTag: string;
   description: string;
   bitrate: string;
 } {
-  const lower = filename.toLowerCase();
-
-  let category: Track['category'] = 'ambient';
-  let moodTag = 'Dark Ambient';
-  let description = 'Атмосферный звуковой ландшафт с глубокими текстурами и синтезаторными слоями.';
-
-  if (lower.includes('beat') || lower.includes('shake') || lower.includes('dance') || lower.includes('techno') || lower.includes('edm')) {
-    category = 'edm';
-    moodTag = 'Industrial Beat';
-    description = 'Энергичный электронный ритм с плотным басом и динамичными акцентами.';
-  } else if (lower.includes('chill') || lower.includes('rest') || lower.includes('downtempo') || lower.includes('slow') || lower.includes('calm')) {
-    category = 'downtempo';
-    moodTag = 'Deep Downtempo';
-    description = 'Мягкий меланхоличный темп и теплые пэды для спокойного прослушивания.';
-  } else if (lower.includes('dark') || lower.includes('void') || lower.includes('hole') || lower.includes('shadow') || lower.includes('horror')) {
-    category = 'dark';
-    moodTag = 'Void Atmospheric';
-    description = 'Глубокие суб-басы и пространственные реверберации тёмного эмбиента.';
-  } else if (lower.includes('sky') || lower.includes('cinematic') || lower.includes('dawn') || lower.includes('space') || lower.includes('ocean') || lower.includes('sea')) {
-    category = 'cinematic';
-    moodTag = 'Cinematic Soundscape';
-    description = 'Пространственное кинематографичное звучание с панорамными текстурами.';
-  } else if (lower.includes('glitch') || lower.includes('noise') || lower.includes('test') || lower.includes('modular') || lower.includes('exp')) {
-    category = 'experimental';
-    moodTag = 'Experimental Tone';
-    description = 'Экспериментальный саунд-дизайн, модулярные синтезаторы и текстурные шумы.';
-  }
-
   const isFlac = format.toLowerCase() === 'flac';
   const isWav = format.toLowerCase() === 'wav';
   const bitrate = isFlac ? 'Lossless FLAC' : isWav ? 'Uncompressed WAV' : '320 kbps High Quality';
 
-  return { category, moodTag, description, bitrate };
+  return {
+    category: format.toLowerCase(),
+    moodTag: 'AVAIM0013',
+    description: 'Оригинальная композиция проекта AVAIM0013.',
+    bitrate,
+  };
 }
 
 interface GitHubContentItem {
@@ -161,6 +159,8 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
   // Sort alphabetically by filename
   audioFiles.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
 
+  const customMetadataMap = getCustomTrackMetadata();
+
   const tracks: Track[] = audioFiles.map((file, idx) => {
     const extMatch = file.name.match(/\.([a-z0-9]+)$/i);
     const format = (extMatch ? extMatch[1].toLowerCase() : 'mp3');
@@ -184,19 +184,21 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
       estSec = Math.max(0, Math.min(59, approxSec % 60));
     }
 
+    const customMeta = customMetadataMap[file.name] || customMetadataMap[title];
+
     return {
       id: idx,
       title,
       filename: file.name,
       audioUrl: downloadUrl,
       format,
-      category: classification.genre,
-      moodTag: classification.moodTag,
+      category: customMeta?.category || classification.genre || 'all',
+      moodTag: customMeta?.moodTag || classification.moodTag || 'AVAIM0013',
       durationEst: `${estMin}:${String(estSec).padStart(2, '0')}`,
-      description: classification.description,
+      description: customMeta?.description || classification.description || 'Оригинальная композиция проекта AVAIM0013.',
       bitrate,
       sampleRate: format === 'flac' ? '44.1 kHz / 24-bit' : '44.1 kHz / 16-bit',
-      bpm: classification.estimatedBpm,
+      bpm: customMeta?.bpm !== undefined ? customMeta.bpm : classification.estimatedBpm,
       source: 'github',
       sizeBytes: file.size,
       isAnalyzed: false,

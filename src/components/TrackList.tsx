@@ -1,27 +1,23 @@
 import React, { useState, useMemo } from 'react';
-import { Track } from '../types';
 import { useAudio } from '../context/AudioContext';
+import { ARTIST_NAME } from '../data/tracks';
 import {
   Search,
   Play,
   Pause,
   Heart,
-  Plus,
-  Info,
   Music,
   ChevronDown,
   ChevronUp,
-  Sparkles,
 } from 'lucide-react';
 
 interface TrackListProps {
-  onOpenTrackInfo: (track: Track) => void;
   onShowToast: (text: string) => void;
 }
 
-type FilterCategory = 'all' | 'favorites' | 'ambient' | 'edm' | 'dark' | 'downtempo' | 'experimental' | 'cinematic';
+type FilterCategory = 'all' | 'favorites' | string;
 
-export const TrackList: React.FC<TrackListProps> = ({ onOpenTrackInfo, onShowToast }) => {
+export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
   const {
     tracks,
     currentTrack,
@@ -30,11 +26,8 @@ export const TrackList: React.FC<TrackListProps> = ({ onOpenTrackInfo, onShowToa
     togglePlayPause,
     toggleFavorite,
     isFavorite,
-    addToQueue,
     favorites,
     isSyncingGitHub,
-    analyzeAllTracks,
-    isAnalyzingTracks,
   } = useAudio();
 
   // Collapsed by default according to user requirement
@@ -42,43 +35,24 @@ export const TrackList: React.FC<TrackListProps> = ({ onOpenTrackInfo, onShowToa
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<FilterCategory>('all');
 
-  const categories: { id: FilterCategory; label: string }[] = [
-    { id: 'all', label: `Все (${tracks.length})` },
-    { id: 'favorites', label: `★ (${favorites.length})` },
-    { id: 'ambient', label: 'Ambient' },
-    { id: 'edm', label: 'Techno' },
-    { id: 'dark', label: 'Dark Wave' },
-    { id: 'downtempo', label: 'Downtempo' },
-    { id: 'cinematic', label: 'Cinematic' },
-    { id: 'experimental', label: 'Glitch' },
-  ];
-
-  const handleBatchAnalyze = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onShowToast('Анализ аудиосигналов для всех треков (BPM, спектр, жанр)...');
-    try {
-      await analyzeAllTracks();
-      onShowToast('Анализ жанров и темпа завершен!');
-    } catch {
-      onShowToast('Ошибка при анализе');
-    }
-  };
+  // Categories
+  const categories = useMemo(() => {
+    const list: { id: FilterCategory; label: string }[] = [
+      { id: 'all', label: `Все треки (${tracks.length})` },
+      { id: 'favorites', label: `Избранное (${favorites.length})` },
+    ];
+    return list;
+  }, [tracks, favorites]);
 
   // Filtered tracks
   const filteredTracks = useMemo(() => {
     return tracks.filter((track) => {
       const q = searchQuery.toLowerCase().trim();
-      const matchesSearch =
-        !q ||
-        track.title.toLowerCase().includes(q) ||
-        track.moodTag.toLowerCase().includes(q) ||
-        track.format.toLowerCase().includes(q);
+      const matchesSearch = !q || track.title.toLowerCase().includes(q);
 
       let matchesCategory = true;
       if (selectedCategory === 'favorites') {
         matchesCategory = favorites.includes(track.id);
-      } else if (selectedCategory !== 'all') {
-        matchesCategory = track.category === selectedCategory;
       }
 
       return matchesSearch && matchesCategory;
@@ -113,37 +87,24 @@ export const TrackList: React.FC<TrackListProps> = ({ onOpenTrackInfo, onShowToa
         <div className="space-y-3 pt-1 animate-fadeIn">
           {/* Search & Filter Bar */}
           <div className="space-y-2.5">
-            {/* Search + Quick batch analysis */}
-            <div className="flex items-center gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-500" />
-                <input
-                  type="text"
-                  placeholder="Поиск по названию, стилю..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-200 placeholder-neutral-500 text-xs font-mono focus:outline-none focus:border-neutral-700 transition"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-neutral-500 hover:text-neutral-300"
-                  >
-                    Очистить
-                  </button>
-                )}
-              </div>
-
-              {/* Auto-detect genres button */}
-              <button
-                onClick={handleBatchAnalyze}
-                disabled={isAnalyzingTracks || tracks.length === 0}
-                className="px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-neutral-200 text-xs font-mono flex items-center gap-1.5 transition shrink-0 disabled:opacity-50"
-                title="Автоматически определить жанры и темп (BPM) всех треков по аудиосигналу"
-              >
-                <Sparkles className={`w-3.5 h-3.5 ${isAnalyzingTracks ? 'animate-spin text-neutral-200' : ''}`} />
-                <span className="hidden sm:inline">{isAnalyzingTracks ? 'Анализ...' : 'Авто-жанр'}</span>
-              </button>
+            {/* Search Input */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-500" />
+              <input
+                type="text"
+                placeholder="Поиск по названию трека..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-200 placeholder-neutral-500 text-xs font-mono focus:outline-none focus:border-neutral-700 transition"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-neutral-500 hover:text-neutral-300"
+                >
+                  Очистить
+                </button>
+              )}
             </div>
 
             {/* Category Filter Chips - Wrapped for all screen sizes */}
@@ -231,24 +192,11 @@ export const TrackList: React.FC<TrackListProps> = ({ onOpenTrackInfo, onShowToa
                               isCurrent ? 'text-neutral-100 font-semibold' : 'text-neutral-300'
                             }`}
                           >
-                            {String(index + 1).padStart(2, '0')}. {track.title}
+                            {track.title}
                           </p>
                         </div>
-                        <p className="text-[10px] text-neutral-500 font-mono truncate flex items-center gap-1">
-                          <span>{track.moodTag}</span>
-                          <span>•</span>
-                          {track.bpm ? (
-                            <>
-                              <span className="text-neutral-400">{track.bpm} BPM</span>
-                              <span>•</span>
-                            </>
-                          ) : null}
-                          <span className="uppercase">{track.format}</span>
-                          {track.isAnalyzed && (
-                            <span className="text-[9px] px-1 py-0.2 rounded bg-neutral-800 text-neutral-400 border border-neutral-700">
-                              DSP
-                            </span>
-                          )}
+                        <p className="text-[10px] text-neutral-500 font-mono truncate">
+                          {ARTIST_NAME}
                         </p>
                       </div>
                     </div>
@@ -266,25 +214,6 @@ export const TrackList: React.FC<TrackListProps> = ({ onOpenTrackInfo, onShowToa
                         title={isFav ? 'Удалить из избранного' : 'Добавить в избранное'}
                       >
                         <Heart className={`w-3.5 h-3.5 ${isFav ? 'fill-rose-400' : ''}`} />
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          addToQueue(track);
-                          onShowToast(`Трек "${track.title}" добавлен в очередь`);
-                        }}
-                        className="p-1.5 rounded-md text-neutral-500 hover:text-neutral-300 transition"
-                        title="Добавить в очередь"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                      </button>
-
-                      <button
-                        onClick={() => onOpenTrackInfo(track)}
-                        className="p-1.5 rounded-md text-neutral-500 hover:text-neutral-300 transition"
-                        title="Информация о треке"
-                      >
-                        <Info className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>

@@ -6,11 +6,8 @@ import { TrackList } from './components/TrackList';
 import { AudioEqualizerModal } from './components/AudioEqualizerModal';
 import { SleepTimerModal } from './components/SleepTimerModal';
 import { ZenVisualizerModal } from './components/ZenVisualizerModal';
-import { TrackInfoModal } from './components/TrackInfoModal';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
-import { QueueDrawer } from './components/QueueDrawer';
 import { Toast } from './components/Toast';
-import { Track } from './types';
 
 function MainApp() {
   const {
@@ -31,8 +28,6 @@ function MainApp() {
   const [isSleepOpen, setIsSleepOpen] = useState(false);
   const [isZenOpen, setIsZenOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
-  const [isQueueOpen, setIsQueueOpen] = useState(false);
-  const [selectedTrackForInfo, setSelectedTrackForInfo] = useState<Track | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -113,8 +108,6 @@ function MainApp() {
           setIsSleepOpen(false);
           setIsZenOpen(false);
           setIsShortcutsOpen(false);
-          setIsQueueOpen(false);
-          setSelectedTrackForInfo(null);
           break;
       }
     };
@@ -127,10 +120,8 @@ function MainApp() {
     <div className="min-h-screen bg-[#09090b] text-neutral-100 flex flex-col selection:bg-neutral-800 selection:text-white transition-colors duration-300">
       {/* Minimalist Top Header */}
       <Header
-        onOpenEQ={() => setIsEQOpen(true)}
         onOpenZen={() => setIsZenOpen(true)}
         onOpenShortcuts={() => setIsShortcutsOpen(true)}
-        onOpenQueue={() => setIsQueueOpen(true)}
         onShowToast={showToast}
       />
 
@@ -140,12 +131,9 @@ function MainApp() {
           onOpenEQ={() => setIsEQOpen(true)}
           onOpenSleep={() => setIsSleepOpen(true)}
           onOpenZen={() => setIsZenOpen(true)}
-          onOpenTrackInfo={() => setSelectedTrackForInfo(currentTrack)}
-          onOpenQueue={() => setIsQueueOpen(true)}
           onShowToast={showToast}
         />
         <TrackList
-          onOpenTrackInfo={(track) => setSelectedTrackForInfo(track)}
           onShowToast={showToast}
         />
       </main>
@@ -160,14 +148,7 @@ function MainApp() {
           showToast(`Скопирована ссылка на трек "${currentTrack.title}"`);
         }}
       />
-      <TrackInfoModal
-        track={selectedTrackForInfo}
-        isOpen={selectedTrackForInfo !== null}
-        onClose={() => setSelectedTrackForInfo(null)}
-        onShowToast={showToast}
-      />
       <KeyboardShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} />
-      <QueueDrawer isOpen={isQueueOpen} onClose={() => setIsQueueOpen(false)} />
       <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
     </div>
   );

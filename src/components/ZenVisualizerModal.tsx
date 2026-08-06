@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAudio } from '../context/AudioContext';
 import { VisualizerCanvas } from './VisualizerCanvas';
 import { Track, VisualizerMode } from '../types';
+import { ARTIST_NAME } from '../data/tracks';
 import {
   Play,
   Pause,
@@ -161,14 +162,11 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
         }`}
       >
         <div className="inline-block mb-2 px-3 py-1 rounded-full bg-neutral-900/80 border border-neutral-800 text-neutral-400 text-xs font-mono tracking-widest uppercase">
-          AVAIM0013 • {currentTrack.moodTag}
+          {ARTIST_NAME}
         </div>
-        <h1 className="text-3xl sm:text-5xl font-extrabold font-mono tracking-wide text-neutral-200 drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+        <h1 className="text-2xl sm:text-4xl font-medium font-mono tracking-wide text-neutral-100 drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
           {currentTrack.title}
         </h1>
-        <p className="text-xs sm:text-sm text-neutral-400 mt-2 font-mono drop-shadow">
-          {currentTrack.description}
-        </p>
       </div>
 
       {/* Bottom Floating Control Bar */}
@@ -180,15 +178,38 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
         <div className="bg-neutral-900/90 border border-neutral-800/90 backdrop-blur-xl rounded-2xl p-4 shadow-2xl space-y-3">
           {/* Timeline Bar */}
           <div className="space-y-1">
-            <div className="relative flex items-center group">
+            <div className="relative flex items-center h-6 group cursor-pointer">
+              {/* Background Track & Active Progress Fill */}
+              <div className="w-full h-1.5 bg-neutral-800 rounded-full overflow-hidden relative">
+                <div
+                  className="absolute left-0 top-0 h-full bg-neutral-200 rounded-full transition-all"
+                  style={{
+                    width: `${duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0}%`,
+                  }}
+                />
+              </div>
+
+              {/* Thumb circle on top (z-20) */}
+              <div
+                className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white border border-neutral-900 rounded-full shadow-lg pointer-events-none transition-transform group-hover:scale-125 z-20"
+                style={{
+                  left: `calc(${
+                    duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0
+                  }% - 7px)`,
+                }}
+              />
+
+              {/* Range input */}
               <input
                 type="range"
                 min="0"
                 max={duration || 100}
+                step="0.1"
                 value={currentTime}
                 onChange={(e) => seek(parseFloat(e.target.value))}
                 title="Перемотка трека"
-                className="w-full h-2 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-neutral-300"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30"
+                aria-label="Перемотка трека"
               />
             </div>
             <div className="flex justify-between text-xs font-mono text-neutral-400 px-0.5">
@@ -260,16 +281,31 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
                   <Volume2 className="w-4 h-4" />
                 )}
               </button>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={isMuted ? 0 : volume}
-                onChange={(e) => setVolume(parseFloat(e.target.value))}
-                title={`Громкость: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
-                className="w-20 sm:w-28 h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-neutral-300"
-              />
+              <div className="relative flex items-center w-20 sm:w-28 h-5 group cursor-pointer">
+                <div className="w-full h-1 bg-neutral-800 rounded-full overflow-hidden relative">
+                  <div
+                    className="absolute left-0 top-0 h-full bg-neutral-300 rounded-full transition-all"
+                    style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}
+                  />
+                </div>
+                <div
+                  className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white border border-neutral-900 rounded-full shadow pointer-events-none transition-transform group-hover:scale-125 z-20"
+                  style={{
+                    left: `calc(${(isMuted ? 0 : volume) * 100}% - 5px)`,
+                  }}
+                />
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={isMuted ? 0 : volume}
+                  onChange={(e) => setVolume(parseFloat(e.target.value))}
+                  title={`Громкость: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30"
+                  aria-label="Громкость"
+                />
+              </div>
             </div>
           </div>
         </div>

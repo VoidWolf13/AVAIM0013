@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
-import { useAudio } from '../context/AudioContext';
 import { ARTIST_NAME, ARTIST_EMAIL } from '../data/tracks';
 import {
   Mail,
   Check,
   Keyboard,
-  Sliders,
   Maximize2,
-  ListMusic,
 } from 'lucide-react';
 
 interface HeaderProps {
-  onOpenEQ: () => void;
   onOpenZen: () => void;
   onOpenShortcuts: () => void;
-  onOpenQueue: () => void;
   onShowToast: (text: string) => void;
 }
 
@@ -55,13 +50,10 @@ const RHOMBUS_DOTS_13: RhombusDot[] = [
 ];
 
 export const Header: React.FC<HeaderProps> = ({
-  onOpenEQ,
   onOpenZen,
   onOpenShortcuts,
-  onOpenQueue,
   onShowToast,
 }) => {
-  const { isPlaying, queue } = useAudio();
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   const handleCopyEmail = (e: React.MouseEvent) => {
@@ -98,7 +90,7 @@ export const Header: React.FC<HeaderProps> = ({
               />
             ))}
           </div>
-          <span className="text-sm font-bold font-mono tracking-wider text-white">
+          <span className="text-sm font-medium font-mono tracking-widest text-neutral-200">
             {ARTIST_NAME}
           </span>
         </div>
@@ -112,27 +104,6 @@ export const Header: React.FC<HeaderProps> = ({
             title={`Скопировать email (${ARTIST_EMAIL})`}
           >
             {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Mail className="w-4 h-4" />}
-          </button>
-
-          {/* Equalizer */}
-          <button
-            onClick={onOpenEQ}
-            className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
-            title="Эквалайзер звука"
-          >
-            <Sliders className="w-4 h-4" />
-          </button>
-
-          {/* Queue */}
-          <button
-            onClick={onOpenQueue}
-            className="relative p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
-            title="Очередь воспроизведения"
-          >
-            <ListMusic className="w-4 h-4" />
-            {queue.length > 0 && (
-              <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-cyan-400" />
-            )}
           </button>
 
           {/* Keyboard Shortcuts */}
