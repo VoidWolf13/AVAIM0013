@@ -199,11 +199,10 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
       bitrate,
       sampleRate: format === 'flac' ? '44.1 kHz / 24-bit' : '44.1 kHz / 16-bit',
       bpm: customMeta?.bpm !== undefined ? customMeta.bpm : classification.estimatedBpm,
-      source: 'github',
-      sizeBytes: file.size,
-      isAnalyzed: false,
-    };
-  });
+       source: 'github',
+       sizeBytes: file.size,
+     };
+   });
 
   // Save to localStorage cache
   cacheGitHubTracks(tracks);

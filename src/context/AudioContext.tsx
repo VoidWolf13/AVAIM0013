@@ -10,7 +10,6 @@ import {
   saveCustomTrackMetadata,
   DEFAULT_GITHUB_CONFIG,
 } from '../utils/githubScanner';
-import { analyzeAudioUrl, AudioAnalysisResult } from '../utils/audioGenreClassifier';
 
 interface AudioContextType {
   tracks: Track[];
@@ -36,8 +35,7 @@ interface AudioContextType {
   githubSyncError: string | null;
   githubConfig: GitHubSyncConfig;
   lastSyncTime: Date | null;
-  isAnalyzingTracks: boolean;
-  
+
   // Actions
   playTrack: (trackOrIndex: Track | number) => void;
   togglePlayPause: () => void;
@@ -59,8 +57,6 @@ interface AudioContextType {
   updateGitHubConfig: (config: GitHubSyncConfig) => void;
   resetToDefaultTracks: () => void;
   updateTrackMetadata: (trackId: number, metadata: { moodTag?: string; category?: string; description?: string; bpm?: number }) => void;
-  analyzeTrackGenre: (trackId: number) => Promise<AudioAnalysisResult | undefined>;
-  analyzeAllTracks: () => Promise<void>;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -98,7 +94,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isSyncingGitHub, setIsSyncingGitHub] = useState<boolean>(false);
   const [githubSyncError, setGithubSyncError] = useState<string | null>(null);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
-  const [isAnalyzingTracks, setIsAnalyzingTracks] = useState<boolean>(false);
 
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -281,29 +276,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       await audio.play();
       setIsPlaying(true);
-
-      // Auto-analyze audio signal in background if not yet analyzed
-      if (!targetTrack.isAnalyzed && audioUrl) {
-        analyzeAudioUrl(audioUrl).then(result => {
-          setTracks(prev => {
-            const updated = prev.map(t => {
-              if (t.id === targetTrack.id) {
-                return {
-                  ...t,
-                  category: result.genre,
-                  moodTag: result.moodTag,
-                  description: result.description,
-                  bpm: result.detectedBpm,
-                  isAnalyzed: true,
-                };
-              }
-              return t;
-            });
-            cacheGitHubTracks(updated);
-            return updated;
-          });
-        }).catch(err => console.warn('Background audio analysis notice:', err));
-      }
     } catch (err) {
       console.warn('Error starting playback for track:', targetTrack.title, err);
       setIsPlaying(false);
@@ -532,38 +504,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return favorites.includes(trackId);
   }, [favorites]);
 
-  // Automatic Audio Signal Genre Analysis for a single track
-  const analyzeTrackGenre = useCallback(async (trackId: number) => {
-    const target = tracks.find(t => t.id === trackId);
-    if (!target) return;
-    const audioUrl = getTrackAudioUrl(target);
-    if (!audioUrl) return;
-
-    try {
-      const result = await analyzeAudioUrl(audioUrl);
-      setTracks(prev => {
-        const updated = prev.map(t => {
-          if (t.id === trackId) {
-            return {
-              ...t,
-              category: result.genre,
-              moodTag: result.moodTag,
-              description: result.description,
-              bpm: result.detectedBpm,
-              isAnalyzed: true,
-            };
-          }
-          return t;
-        });
-        cacheGitHubTracks(updated);
-        return updated;
-      });
-      return result;
-    } catch (err) {
-      console.warn('Audio genre analysis failed:', err);
-    }
-  }, [tracks]);
-
   // User custom metadata update (genre, mood, description, bpm)
   const updateTrackMetadata = useCallback((trackId: number, metadata: { moodTag?: string; category?: string; description?: string; bpm?: number }) => {
     setTracks(prev => {
@@ -649,62 +589,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [playbackMode, playNext, volume]);
 
-  // Keyboard Shortcuts (Space, Arrow keys, M, S, R)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-        return;
-      }
-
-      switch (e.code) {
-        case 'Space':
-          e.preventDefault();
-          togglePlayPause();
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          seekRelative(5);
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          seekRelative(-5);
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          setVolume(Math.min(1, volume + 0.05));
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          setVolume(Math.max(0, volume - 0.05));
-          break;
-        case 'KeyM':
-          e.preventDefault();
-          toggleMute();
-          break;
-        case 'KeyN':
-          e.preventDefault();
-          playNext();
-          break;
-        case 'KeyP':
-          e.preventDefault();
-          playPrevious();
-          break;
-        case 'KeyS':
-          e.preventDefault();
-          setPlaybackMode(playbackMode === 'random' ? 'sequential' : 'random');
-          break;
-        case 'KeyR':
-          e.preventDefault();
-          setPlaybackMode(playbackMode === 'loop' ? 'sequential' : 'loop');
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [togglePlayPause, seekRelative, setVolume, volume, toggleMute, playNext, playPrevious, playbackMode, setPlaybackMode]);
-
   return (
     <AudioContext.Provider
       value={{
@@ -731,7 +615,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         githubSyncError,
         githubConfig,
         lastSyncTime,
-        isAnalyzingTracks,
         playTrack,
         togglePlayPause,
         playNext,
@@ -752,10 +635,9 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         updateGitHubConfig,
         resetToDefaultTracks,
         updateTrackMetadata,
-        analyzeTrackGenre,
-        analyzeAllTracks: async () => {},
       }}
     >
+
       {/* Hidden core audio element */}
       <audio
         ref={audioRef}
