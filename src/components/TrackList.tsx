@@ -46,7 +46,7 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
 
   // Filtered tracks
   const filteredTracks = useMemo(() => {
-    return tracks.filter((track) => {
+    const filtered = tracks.filter((track) => {
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch = !q || track.title.toLowerCase().includes(q);
 
@@ -56,6 +56,13 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
       }
 
       return matchesSearch && matchesCategory;
+    });
+
+    // Sort by lastModified (newest first), filename as tiebreaker
+    return filtered.sort((a, b) => {
+      const diff = (b.lastModified || 0) - (a.lastModified || 0);
+      if (diff !== 0) return diff;
+      return a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' });
     });
   }, [tracks, searchQuery, selectedCategory, favorites]);
 

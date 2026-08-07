@@ -13,6 +13,7 @@ export interface Track {
   bpm?: number;
   source?: 'embedded' | 'github';
   sizeBytes?: number;
+  lastModified?: number;
 }
 
 export interface GitHubSyncConfig {

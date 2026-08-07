@@ -43,6 +43,7 @@ export function cacheGitHubTracks(tracks: Track[]): void {
 }
 
 const STORAGE_KEY_CUSTOM_METADATA = 'avaim_custom_track_metadata';
+const STORAGE_KEY_COMMIT_DATES = 'avaim_github_commit_dates';
 
 export function getCustomTrackMetadata(): Record<string, { moodTag?: string; category?: string; description?: string; bpm?: number }> {
   try {
@@ -60,6 +61,23 @@ export function saveCustomTrackMetadata(filenameOrId: string, metadata: { moodTa
     localStorage.setItem(STORAGE_KEY_CUSTOM_METADATA, JSON.stringify(current));
   } catch (err) {
     console.warn('Failed to save custom track metadata:', err);
+  }
+}
+
+export function getCachedCommitDates(): Record<string, number> {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_COMMIT_DATES);
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function cacheCommitDates(dates: Record<string, number>): void {
+  try {
+    localStorage.setItem(STORAGE_KEY_COMMIT_DATES, JSON.stringify(dates));
+  } catch (err) {
+    console.warn('Failed to cache commit dates:', err);
   }
 }
 
@@ -156,11 +174,63 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
     throw new Error(`В папке "${cleanFolder || '/'}" репозитория ${owner}/${repo} не найдено аудиофайлов (.mp3, .flac, .wav, .ogg).`);
   }
 
-  // Sort alphabetically by filename
-  audioFiles.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
-
   const customMetadataMap = getCustomTrackMetadata();
 
+  // Fetch last-modified dates from GitHub commits API
+  const cachedDates = getCachedCommitDates();
+  const commitDates: Record<string, number> = { ...cachedDates };
+
+  const filesNeedingDates = audioFiles.filter(
+    f => !commitDates[f.path] && !commitDates[f.name]
+  );
+
+  if (filesNeedingDates.length > 0) {
+    try {
+      const commitsUrl = `https://api.github.com/repos/${owner}/${repo}/commits?path=${encodeURIComponent(cleanFolder)}&per_page=50`;
+      const commitsResp = await fetch(commitsUrl, {
+        headers: { 'Accept': 'application/vnd.github.v3+json' },
+      });
+
+      if (commitsResp.ok) {
+        const commits = await commitsResp.json() as Array<{ url: string; commit: { committer: { date: string } } }>;
+
+        const maxDetailFetches = 20;
+        const detailResults = await Promise.allSettled(
+          commits.slice(0, maxDetailFetches).map(c =>
+            fetch(c.url, { headers: { 'Accept': 'application/vnd.github.v3+json' } }).then(r => r.ok ? r.json() : null)
+          )
+        );
+
+        for (const result of detailResults) {
+          if (result.status === 'fulfilled' && result.value) {
+            const commitDate = new Date(result.value.commit.committer.date).getTime();
+            for (const fileEntry of (result.value.files || []) as Array<{ filename: string }>) {
+              const fname = fileEntry.filename;
+              if (!commitDates[fname]) {
+                commitDates[fname] = commitDate;
+              }
+            }
+          }
+        }
+
+        cacheCommitDates(commitDates);
+      }
+    } catch {
+      // Ignore — fall back to cached dates only
+    }
+  }
+
+  // Sort by last modification date (newest first), filename as tiebreaker
+  audioFiles.sort((a, b) => {
+    const dateA = commitDates[a.path] || commitDates[a.name] || 0;
+    const dateB = commitDates[b.path] || commitDates[b.name] || 0;
+    if (dateB !== dateA) {
+      return dateB - dateA;
+    }
+    return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+  });
+
+  // Create track objects
   const tracks: Track[] = audioFiles.map((file, idx) => {
     const extMatch = file.name.match(/\.([a-z0-9]+)$/i);
     const format = (extMatch ? extMatch[1].toLowerCase() : 'mp3');
@@ -171,11 +241,9 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
     const isWav = format.toLowerCase() === 'wav';
     const bitrate = isFlac ? 'Lossless FLAC' : isWav ? 'Uncompressed WAV' : '320 kbps High Quality';
 
-    // Prefer raw github usercontent or github pages direct download url
-    const downloadUrl = file.download_url || 
+    const downloadUrl = file.download_url ||
       `https://raw.githubusercontent.com/${owner}/${repo}/${branch || 'main'}/${file.path}`;
 
-    // Rough duration estimation based on file size if MP3/FLAC
     let estMin = 3;
     let estSec = 30;
     if (file.size > 0) {
@@ -185,6 +253,7 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
     }
 
     const customMeta = customMetadataMap[file.name] || customMetadataMap[title];
+    const lastMod = commitDates[file.path] || commitDates[file.name];
 
     return {
       id: idx,
@@ -199,10 +268,11 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
       bitrate,
       sampleRate: format === 'flac' ? '44.1 kHz / 24-bit' : '44.1 kHz / 16-bit',
       bpm: customMeta?.bpm !== undefined ? customMeta.bpm : classification.estimatedBpm,
-       source: 'github',
-       sizeBytes: file.size,
-     };
-   });
+      source: 'github',
+      sizeBytes: file.size,
+      lastModified: lastMod,
+    };
+  });
 
   // Save to localStorage cache
   cacheGitHubTracks(tracks);

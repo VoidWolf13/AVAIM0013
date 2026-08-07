@@ -178,6 +178,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setTracks(TRACKS);
     try {
       localStorage.removeItem('avaim_github_cached_tracks');
+      localStorage.removeItem('avaim_github_commit_dates');
     } catch {
       // ignore
     }
