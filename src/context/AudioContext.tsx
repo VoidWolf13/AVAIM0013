@@ -87,7 +87,15 @@ export const EMPTY_TRACK: Track = {
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [tracks, setTracks] = useState<Track[]>(() => {
     const cached = getCachedGitHubTracks();
-    return (cached && cached.length > 0) ? cached : TRACKS;
+    if (cached && cached.length > 0) {
+      // Ensure cached tracks are sorted newest-first (by lastModified)
+      return cached.sort((a, b) => {
+        const diff = (b.lastModified || 0) - (a.lastModified || 0);
+        if (diff !== 0) return diff;
+        return a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' });
+      });
+    }
+    return TRACKS;
   });
 
   const [githubConfig, setGithubConfig] = useState<GitHubSyncConfig>(() => getStoredGitHubConfig());
