@@ -97,6 +97,28 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Navigation Actions */}
         <div className="flex items-center gap-1 shrink-0">
+          {/* VKontakte */}
+          <a
+            href="https://vk.ru/avaim0013_official"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
+            title="Группа ВКонтакте"
+          >
+            <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
+              <text
+                x="17"
+                y="12.5"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="currentColor"
+                fontSize="12"
+                fontWeight="500"
+                fontFamily="Arial, sans-serif"
+              >vk</text>
+            </svg>
+          </a>
+
           {/* Email */}
           <button
             onClick={handleCopyEmail}
