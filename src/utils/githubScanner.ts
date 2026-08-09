@@ -1,5 +1,6 @@
 import { Track, GitHubSyncConfig } from '../types';
 import { classifyByFilename } from './audioGenreClassifier';
+import { readID3TagsFromUrl } from './id3Parser';
 
 export const DEFAULT_GITHUB_CONFIG: GitHubSyncConfig = {
   owner: 'VoidWolf13',
@@ -230,19 +231,36 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
     return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
   });
 
-  // Create track objects
-  const tracks: Track[] = audioFiles.map((file, idx) => {
+  // Create track objects with ID3 tags for MP3 files
+  const trackPromises = audioFiles.map(async (file, idx) => {
     const extMatch = file.name.match(/\.([a-z0-9]+)$/i);
     const format = (extMatch ? extMatch[1].toLowerCase() : 'mp3');
     const classification = classifyByFilename(file.name);
-    const title = formatAudioTitle(file.name);
+    let title = formatAudioTitle(file.name);
+    let artist = 'AVAIM0013';
+
+    const downloadUrl = file.download_url ||
+      `https://raw.githubusercontent.com/${owner}/${repo}/${branch || 'main'}/${file.path}`;
+
+    // Читаем ID3-теги для MP3 файлов
+    if (format === 'mp3') {
+      try {
+        const tags = await readID3TagsFromUrl(downloadUrl);
+        if (tags.title) {
+          title = tags.title;
+        }
+        if (tags.artist) {
+          artist = tags.artist;
+        }
+      } catch (error) {
+        // Если не удалось прочитать теги, используем имя файла
+        console.warn(`Не удалось прочитать ID3-теги для ${file.name}:`, error);
+      }
+    }
 
     const isFlac = format.toLowerCase() === 'flac';
     const isWav = format.toLowerCase() === 'wav';
     const bitrate = isFlac ? 'Lossless FLAC' : isWav ? 'Uncompressed WAV' : '320 kbps High Quality';
-
-    const downloadUrl = file.download_url ||
-      `https://raw.githubusercontent.com/${owner}/${repo}/${branch || 'main'}/${file.path}`;
 
     let estMin = 3;
     let estSec = 30;
@@ -258,6 +276,7 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
     return {
       id: idx,
       title,
+      artist,
       filename: file.name,
       audioUrl: downloadUrl,
       format,
@@ -273,6 +292,9 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
       lastModified: lastMod,
     };
   });
+
+  // Ждем загрузки всех тегов
+  const tracks = await Promise.all(trackPromises);
 
   // Save to localStorage cache
   cacheGitHubTracks(tracks);
