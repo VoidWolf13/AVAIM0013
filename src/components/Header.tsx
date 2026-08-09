@@ -66,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-black/80 backdrop-blur-md transition-all">
-      <div className="max-w-xl mx-auto px-4 h-14 flex items-center justify-between gap-2 sm:gap-4">
+      <div className="max-w-xl mx-auto px-3 sm:px-4 h-12 sm:h-14 flex items-center justify-between gap-1.5 sm:gap-4">
         {/* Brand & Artist Name */}
         <div className="flex items-center gap-2.5 shrink-0">
           {/* Rhombus of 13 Constant Pulsing Circles */}
@@ -102,27 +102,27 @@ export const Header: React.FC<HeaderProps> = ({
             href="https://vk.ru/avaim0013_official"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
+            className="p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
             title="Группа ВКонтакте"
           >
-            <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" overflow="visible">
               <text
-                x="17"
-                y="12.5"
+                x="12"
+                y="14"
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="currentColor"
-                fontSize="12"
-                fontWeight="500"
+                fontSize="20"
+                fontWeight="400"
                 fontFamily="Arial, sans-serif"
-              >vk</text>
+              >VK</text>
             </svg>
           </a>
 
           {/* Email */}
           <button
             onClick={handleCopyEmail}
-            className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
+            className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
             title={`Скопировать email (${ARTIST_EMAIL})`}
           >
             {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Mail className="w-4 h-4" />}
@@ -131,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Keyboard Shortcuts */}
           <button
             onClick={onOpenShortcuts}
-            className="hidden sm:flex p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
+            className="hidden sm:flex p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
             title="Горячие клавиши (Пробел, N, P, S, R, F...)"
           >
             <Keyboard className="w-4 h-4" />
@@ -140,7 +140,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Full Fullscreen Button */}
           <button
             onClick={onOpenZen}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono text-neutral-300 hover:text-white bg-black/40 hover:bg-black/60 border border-white/10 transition ml-1"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono text-neutral-300 hover:text-white bg-transparent hover:bg-white/5 border-2 border-white/20 hover:border-white/30 transition ml-1 cursor-pointer"
             title="Полноэкранный визуализатор (F)"
           >
             <Maximize2 className="w-3.5 h-3.5" />

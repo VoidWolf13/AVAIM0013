@@ -85,16 +85,13 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
   };
 
   const visModes: { id: VisualizerMode; label: string; icon: React.ReactNode }[] = [
-    { id: 'bars', label: 'Спектр', icon: <Radio className="w-3.5 h-3.5" /> },
-    { id: 'waveform', label: 'Волна', icon: <Activity className="w-3.5 h-3.5" /> },
-    { id: 'radial', label: 'Круг', icon: <Disc3 className="w-3.5 h-3.5" /> },
     { id: 'particles', label: 'Космос', icon: <Sparkles className="w-3.5 h-3.5" /> },
   ];
 
   return (
     <section
       id="main-player-card"
-      className="w-full rounded-2xl bg-neutral-900/70 border border-neutral-800 p-5 sm:p-6 shadow-xl backdrop-blur-md space-y-5"
+      className="w-full rounded-2xl bg-neutral-900/70 border border-neutral-800 p-4 sm:p-6 shadow-xl backdrop-blur-md space-y-4 sm:space-y-5"
     >
       {/* Top Header Row inside Player: Track Title & Action Buttons */}
       <div className="flex items-start sm:items-center justify-between gap-3">
@@ -111,7 +108,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           {/* Sleep Timer button */}
           <button
             onClick={onOpenSleep}
-            className={`p-2 rounded-lg transition ${
+            className={`p-2 rounded-lg transition cursor-pointer ${
               sleepTimerRemaining !== null
                 ? 'text-neutral-200 bg-neutral-800 border border-neutral-700'
                 : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
@@ -124,54 +121,22 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           {/* EQ button */}
           <button
             onClick={onOpenEQ}
-            className="p-2 rounded-lg text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition"
+            className="p-2 rounded-lg text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition cursor-pointer"
             title="Эквалайзер звука"
           >
             <Sliders className="w-4 h-4" />
-          </button>
-
-          {/* Favorite */}
-          <button
-            onClick={() => toggleFavorite(currentTrack.id)}
-            disabled={tracks.length === 0}
-            className={`p-2 rounded-lg transition disabled:opacity-40 ${
-              isFavorite(currentTrack.id)
-                ? 'text-rose-400'
-                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
-            }`}
-            title={isFavorite(currentTrack.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
-          >
-            <Heart className={`w-4 h-4 ${isFavorite(currentTrack.id) ? 'fill-rose-400' : ''}`} />
           </button>
         </div>
       </div>
 
       {/* Visualizer Display */}
       <div className="space-y-2">
-        <div className="w-full h-28 rounded-xl bg-neutral-950 border border-neutral-800 relative overflow-hidden">
+        <div className="w-full h-24 sm:h-28 rounded-xl bg-neutral-950 border border-neutral-800 relative overflow-hidden">
           <VisualizerCanvas
             className="w-full h-full"
             mode={visualizerMode}
             showOverlayStats={false}
           />
-        </div>
-
-        {/* Visualizer Mode Selector */}
-        <div className="flex items-center justify-center gap-1 text-[11px] font-mono">
-          {visModes.map((m) => (
-            <button
-              key={m.id}
-              onClick={() => setVisualizerMode(m.id)}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition ${
-                visualizerMode === m.id
-                  ? 'bg-neutral-800 text-neutral-200 font-medium border border-neutral-700'
-                  : 'text-neutral-500 hover:text-neutral-300 hover:bg-neutral-900'
-              }`}
-            >
-              {m.icon}
-              <span>{m.label}</span>
-            </button>
-          ))}
         </div>
       </div>
 
@@ -218,91 +183,103 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
       </div>
 
       {/* Centerpiece Transport Controls */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-neutral-800/70">
+      <div className="flex flex-row items-center justify-between gap-2 sm:gap-4 pt-2 border-t border-neutral-800/70">
         {/* Left: Playback Modes (Repeat & Shuffle side by side) */}
-        <div className="flex items-center gap-1.5 order-2 sm:order-1">
+        <div className="flex items-center gap-1 w-16 sm:w-auto justify-start">
           {/* Repeat Button */}
           <button
             onClick={toggleRepeat}
-            className={`p-2 rounded-lg text-xs transition ${
+            className={`p-1.5 sm:p-2 rounded-lg text-xs transition cursor-pointer ${
               playbackMode === 'loop'
                 ? 'text-white bg-neutral-800 border border-neutral-600 shadow-sm'
                 : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
             }`}
             title={playbackMode === 'loop' ? 'Повтор трека: Вкл (R)' : 'Повтор трека: Выкл (R)'}
           >
-            {playbackMode === 'loop' ? <Repeat1 className="w-4 h-4 text-white" /> : <Repeat className="w-4 h-4" />}
+            {playbackMode === 'loop' ? <Repeat1 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" /> : <Repeat className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
           </button>
 
           {/* Shuffle Button (Случайное проигрывание) */}
           <button
             onClick={toggleShuffle}
-            className={`p-2 rounded-lg text-xs transition ${
+            className={`p-1.5 sm:p-2 rounded-lg text-xs transition cursor-pointer ${
               playbackMode === 'random'
                 ? 'text-white bg-neutral-800 border border-neutral-600 shadow-sm'
                 : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
             }`}
             title={playbackMode === 'random' ? 'Случайное воспроизведение: Вкл (S)' : 'Случайное воспроизведение: Выкл (S)'}
           >
-            <Shuffle className="w-4 h-4" />
+            <Shuffle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </button>
+
+          {/* Favorite — desktop only, next to Shuffle */}
+          <button
+            onClick={() => toggleFavorite(currentTrack.id)}
+            disabled={tracks.length === 0}
+            className={`hidden sm:inline-flex p-1.5 sm:p-2 rounded-lg text-xs transition cursor-pointer disabled:opacity-40 ${
+              isFavorite(currentTrack.id)
+                ? 'text-rose-400'
+                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
+            }`}
+            title={isFavorite(currentTrack.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
+          >
+            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isFavorite(currentTrack.id) ? 'fill-rose-400' : ''}`} />
           </button>
         </div>
 
         {/* Center: Main Playback Controls */}
-        <div className="flex items-center gap-4 order-1 sm:order-2">
+        <div className="flex items-center gap-3 sm:gap-4 order-1 sm:order-2">
           <button
             onClick={playPrevious}
-            className="p-2.5 text-neutral-400 hover:text-neutral-200 transition"
+            className="p-2 sm:p-2.5 text-neutral-400 hover:text-neutral-200 transition cursor-pointer"
             title="Предыдущий трек (P / ←)"
           >
-            <SkipBack className="w-5 h-5" />
+            <SkipBack className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           <button
             onClick={togglePlayPause}
-            className="w-13 h-13 rounded-full bg-neutral-200 hover:bg-neutral-300 text-neutral-950 flex items-center justify-center transition transform active:scale-95 shadow-md"
+            className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-neutral-200 hover:bg-neutral-300 text-neutral-950 flex items-center justify-center transition transform active:scale-95 shadow-md cursor-pointer"
             title={isPlaying ? 'Пауза (Пробел)' : 'Воспроизведение (Пробел)'}
           >
             {isPlaying ? (
-              <Pause className="w-6 h-6 fill-current" />
+              <Pause className="w-5 h-5 sm:w-6 sm:h-6 fill-current" />
             ) : (
-              <Play className="w-6 h-6 fill-current ml-0.5" />
+              <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current ml-0.5" />
             )}
           </button>
 
           <button
             onClick={playNext}
-            className="p-2.5 text-neutral-400 hover:text-neutral-200 transition"
+            className="p-2 sm:p-2.5 text-neutral-400 hover:text-neutral-200 transition cursor-pointer"
             title="Следующий трек (N / →)"
           >
-            <SkipForward className="w-5 h-5" />
+            <SkipForward className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
 
-        {/* Right: Volume Slider */}
-        <div className="flex items-center gap-2 order-3">
+        {/* Right: Volume Slider — hidden on mobile */}
+        <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 order-3">
           <button
             onClick={toggleMute}
-            className="p-1.5 text-neutral-400 hover:text-neutral-200 transition"
+            className="p-1 sm:p-1.5 text-neutral-400 hover:text-neutral-200 transition"
             title={isMuted ? 'Включить звук (M)' : 'Выключить звук (M)'}
           >
             {isMuted || volume === 0 ? (
-              <VolumeX className="w-4 h-4 text-rose-400" />
+              <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-400" />
             ) : volume < 0.5 ? (
-              <Volume1 className="w-4 h-4" />
+              <Volume1 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             ) : (
-              <Volume2 className="w-4 h-4" />
+              <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             )}
           </button>
-          <div className="relative flex items-center w-20 h-5 group cursor-pointer">
-            {/* Background track & fill */}
+          <div className="relative flex items-center w-16 sm:w-20 h-5 group cursor-pointer">
             <div className="w-full h-1 bg-neutral-800 rounded-full overflow-hidden relative">
               <div
                 className="absolute left-0 top-0 h-full bg-neutral-300 rounded-full transition-all"
                 style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}
               />
             </div>
-            {/* Volume thumb circle (z-20) */}
             <div
               className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white border border-neutral-900 rounded-full shadow pointer-events-none transition-transform group-hover:scale-125 z-20"
               style={{
@@ -321,6 +298,22 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
               aria-label="Громкость"
             />
           </div>
+        </div>
+
+        {/* Right: Favorite Button — visible only on mobile, replaces volume */}
+        <div className="flex sm:hidden items-center order-3 w-16 justify-end">
+          <button
+            onClick={() => toggleFavorite(currentTrack.id)}
+            disabled={tracks.length === 0}
+            className={`p-1.5 rounded-lg transition cursor-pointer disabled:opacity-40 ${
+              isFavorite(currentTrack.id)
+                ? 'text-rose-400'
+                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
+            }`}
+            title={isFavorite(currentTrack.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
+          >
+            <Heart className={`w-4 h-4 ${isFavorite(currentTrack.id) ? 'fill-rose-400' : ''}`} />
+          </button>
         </div>
       </div>
     </section>

@@ -6,12 +6,14 @@ interface VisualizerCanvasProps {
   className?: string;
   mode?: VisualizerMode;
   showOverlayStats?: boolean;
+  isZenDesktop?: boolean;
 }
 
 export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
   className = 'w-full h-28',
   mode: propMode,
   showOverlayStats = false,
+  isZenDesktop = false,
 }) => {
   const { analyserNode, isPlaying, visualizerMode: contextMode, currentTrack } = useAudio();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -36,8 +38,8 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
       particles: ['#ffffff', '#e4e4e7', '#a1a1aa', '#71717a'],
     };
 
-    // Persistent particle array for particle mode
-    const particleCount = 45;
+    // Persistent particle array for particle mode (more particles on desktop zen)
+    const particleCount = isZenDesktop ? 70 : 45;
     const particles = Array.from({ length: particleCount }, () => ({
       x: Math.random(),
       y: Math.random(),
@@ -258,12 +260,13 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
             const dx = (p.x - p2.x) * width;
             const dy = (p.y - p2.y) * height;
             const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 70) {
+            const lineThreshold = isZenDesktop ? 130 : 70;
+            if (dist < lineThreshold) {
               ctx.beginPath();
               ctx.moveTo(px, py);
               ctx.lineTo(p2.x * width, p2.y * height);
               ctx.strokeStyle = palette.primary;
-              ctx.globalAlpha = (1 - dist / 70) * 0.15 * (1 + bassEnergy * 0.5);
+              ctx.globalAlpha = (1 - dist / lineThreshold) * 0.15 * (1 + bassEnergy * 0.5);
               ctx.lineWidth = 1;
               ctx.stroke();
             }

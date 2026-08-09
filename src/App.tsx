@@ -117,7 +117,7 @@ function MainApp() {
   }, [togglePlayPause, seekRelative, volume, setVolume, toggleMute, playNext, playPrevious, playbackMode, setPlaybackMode]);
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-neutral-100 flex flex-col selection:bg-neutral-800 selection:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-[#09090b]/80/80/80 text-neutral-100 flex flex-col selection:bg-neutral-800 selection:text-white transition-colors duration-300">
       {/* Minimalist Top Header */}
       <Header
         onOpenZen={() => setIsZenOpen(true)}

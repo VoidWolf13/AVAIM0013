@@ -72,7 +72,7 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
       <button
         id="toggle-tracklist-btn"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full py-3 px-4 rounded-xl bg-neutral-900/60 hover:bg-neutral-900 border border-neutral-800 flex items-center justify-between text-xs font-mono text-neutral-300 transition"
+        className="w-full py-3 px-4 rounded-xl bg-neutral-900/60 hover:bg-neutral-900 border border-neutral-800 flex items-center justify-between text-xs font-mono text-neutral-300 transition cursor-pointer"
         title={isExpanded ? 'Свернуть список треков' : 'Развернуть список треков'}
       >
         <div className="flex items-center gap-2">
@@ -107,7 +107,7 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-neutral-500 hover:text-neutral-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-neutral-500 hover:text-neutral-300 cursor-pointer"
                 >
                   Очистить
                 </button>
@@ -122,7 +122,7 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
                   <button
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-2.5 py-1 rounded-lg transition text-[11px] ${
+                    className={`px-2.5 py-1 rounded-lg transition text-[11px] cursor-pointer ${
                       isActive
                         ? 'bg-neutral-800 text-white font-medium border border-neutral-700 shadow-sm'
                         : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900 border border-transparent'
@@ -165,20 +165,20 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
                 return (
                   <div
                     key={track.filename || track.id || index}
-                    className={`group flex items-center justify-between px-3 py-2.5 transition ${
+                    className={`group flex items-center justify-between px-2 sm:px-3 py-2 sm:py-2.5 transition ${
                       isCurrent
                         ? 'bg-neutral-900 text-white'
                         : 'hover:bg-neutral-900/50 text-neutral-300'
                     }`}
                   >
                     {/* Left: Play button & title */}
-                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
                       <button
                         onClick={() => {
                           if (isCurrent) togglePlayPause();
                           else playTrack(track);
                         }}
-                        className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition ${
+                        className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center shrink-0 transition cursor-pointer ${
                           isCurrent
                             ? 'bg-neutral-200 text-neutral-950'
                             : 'bg-neutral-900 text-neutral-400 group-hover:text-neutral-200 group-hover:bg-neutral-800'
@@ -186,9 +186,9 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
                         title={isThisPlaying ? 'Пауза' : 'Воспроизвести'}
                       >
                         {isThisPlaying ? (
-                          <Pause className="w-3 h-3 fill-current" />
+                          <Pause className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current" />
                         ) : (
-                          <Play className="w-3 h-3 fill-current ml-0.5" />
+                          <Play className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current ml-0.5" />
                         )}
                       </button>
 
@@ -209,13 +209,13 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
                     </div>
 
                     {/* Right: Quick actions */}
-                    <div className="flex items-center gap-1 shrink-0 pl-2">
+                    <div className="flex items-center gap-0.5 sm:gap-1 shrink-0 pl-1 sm:pl-2">
                       <button
                         onClick={() => {
                           toggleFavorite(track.id);
                           onShowToast(isFav ? 'Удалено из избранного' : 'Добавлено в избранное');
                         }}
-                        className={`p-1.5 rounded-md transition ${
+                        className={`p-0.5 sm:p-1.5 rounded-md transition cursor-pointer ${
                           isFav ? 'text-rose-400' : 'text-neutral-500 hover:text-neutral-300'
                         }`}
                         title={isFav ? 'Удалить из избранного' : 'Добавить в избранное'}

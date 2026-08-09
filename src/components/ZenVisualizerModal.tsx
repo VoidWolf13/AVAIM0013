@@ -10,15 +10,11 @@ import {
   SkipForward,
   Volume2,
   VolumeX,
-  Maximize2,
   Minimize2,
-  Sparkles,
-  Radio,
-  Activity,
-  Disc3,
-  Flame,
   Heart,
-  Share2,
+  Repeat,
+  Repeat1,
+  Shuffle,
 } from 'lucide-react';
 import { formatTime } from '../utils/formatTime';
 
@@ -32,26 +28,47 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
   const {
     tracks,
     currentTrack,
-    currentTrackIndex,
     isPlaying,
     currentTime,
     duration,
     volume,
     isMuted,
-    visualizerMode,
+    playbackMode,
     togglePlayPause,
     playNext,
     playPrevious,
     seek,
     setVolume,
     toggleMute,
-    setVisualizerMode,
     toggleFavorite,
     isFavorite,
+    setPlaybackMode,
   } = useAudio();
+
+  const toggleRepeat = () => {
+    if (playbackMode === 'loop') {
+      setPlaybackMode('sequential');
+    } else {
+      setPlaybackMode('loop');
+    }
+  };
+
+  const toggleShuffle = () => {
+    if (playbackMode === 'random') {
+      setPlaybackMode('sequential');
+    } else {
+      setPlaybackMode('random');
+    }
+  };
 
   const [controlsVisible, setControlsVisible] = useState(true);
   const idleTimerRef = useRef<number | null>(null);
+
+  // Detect desktop for zen particle line threshold
+  const isDesktop = typeof window !== 'undefined' && window.matchMedia('(min-width: 640px)').matches;
+
+  // Always use particles (Звездная туманность) in zen mode
+  const visualizerMode: VisualizerMode = 'particles';
 
   // Auto-hide controls when mouse is inactive in full-screen zen mode
   const handleMouseMove = () => {
@@ -82,13 +99,6 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
 
   if (!isOpen) return null;
 
-  const visualizerModes: { id: VisualizerMode; label: string; icon: React.ReactNode }[] = [
-    { id: 'radial', label: 'Круговой импульс', icon: <Disc3 className="w-4 h-4" /> },
-    { id: 'bars', label: 'Спектральные полосы', icon: <Radio className="w-4 h-4" /> },
-    { id: 'waveform', label: 'Осциллограф', icon: <Activity className="w-4 h-4" /> },
-    { id: 'particles', label: 'Звездная туманность', icon: <Sparkles className="w-4 h-4" /> },
-  ];
-
   return (
     <div
       id="zen-visualizer-overlay"
@@ -101,73 +111,37 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
           className="w-full h-full rounded-none border-none bg-black"
           mode={visualizerMode}
           showOverlayStats={false}
+          isZenDesktop={isDesktop}
         />
         {/* Subtle vignette layer */}
         <div className="absolute inset-0 pointer-events-none bg-radial-gradient from-transparent via-black/30 to-black/80" />
       </div>
 
-      {/* Top Header Bar */}
+      {/* Top Track Title HUD */}
       <div
-        className={`relative z-10 p-6 flex items-center justify-between transition-opacity duration-500 ${
-          controlsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/80 border border-neutral-700 backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-neutral-300 animate-ping" />
-            <span className="text-xs font-mono font-bold tracking-wider text-neutral-200">ZEN VOID MODE</span>
-          </div>
-          <span className="text-xs font-mono text-neutral-400">
-            Track #{currentTrackIndex + 1} of {tracks.length}
-          </span>
-        </div>
-
-        {/* Visualizer Mode Switcher */}
-        <div className="flex items-center gap-1.5 p-1 bg-neutral-900/80 border border-neutral-800 backdrop-blur-md rounded-xl">
-          {visualizerModes.map((m) => {
-            const isActive = visualizerMode === m.id;
-            return (
-              <button
-                key={m.id}
-                onClick={() => setVisualizerMode(m.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-                  isActive
-                    ? 'bg-neutral-800 text-neutral-200 border border-neutral-700 shadow-sm'
-                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
-                }`}
-                title={m.label}
-              >
-                {m.icon}
-                <span className="hidden sm:inline">{m.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Exit Fullscreen */}
-        <button
-          onClick={onClose}
-          id="exit-zen-mode"
-          className="p-2.5 rounded-full bg-neutral-900/80 border border-neutral-800 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 backdrop-blur-md transition"
-          title="Выйти из полноэкранного режима (Esc)"
-        >
-          <Minimize2 className="w-5 h-5" />
-        </button>
-      </div>
-
-      {/* Center Track Title HUD */}
-      <div
-        className={`relative z-10 text-center px-4 max-w-2xl mx-auto transition-opacity duration-500 pointer-events-none ${
+        className={`relative z-10 text-center px-4 max-w-2xl mx-auto mt-8 transition-opacity duration-500 pointer-events-none ${
           controlsVisible ? 'opacity-100' : 'opacity-20'
         }`}
       >
-        <div className="inline-block mb-2 px-3 py-1 rounded-full bg-neutral-900/80 border border-neutral-800 text-neutral-400 text-xs font-mono tracking-widest uppercase">
+        <div className="mb-2 text-neutral-400 text-2xl font-mono tracking-widest uppercase opacity-10">
           {ARTIST_NAME}
         </div>
-        <h1 className="text-2xl sm:text-4xl font-medium font-mono tracking-wide text-neutral-100 drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+        <h1 className="text-4xl sm:text-8xl font-mono tracking-normal uppercase text-neutral-100 opacity-20 drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
           {currentTrack.title}
         </h1>
       </div>
+
+      {/* Exit Fullscreen — absolute top-right corner */}
+      <button
+        onClick={onClose}
+        id="exit-zen-mode"
+        className={`absolute top-4 right-4 z-20 p-2.5 rounded-full bg-neutral-900/80 border border-neutral-800 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 backdrop-blur-md transition cursor-pointer ${
+          controlsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        title="Выйти из полноэкранного режима (Esc)"
+      >
+        <Minimize2 className="w-5 h-5" />
+      </button>
 
       {/* Bottom Floating Control Bar */}
       <div
@@ -219,60 +193,81 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
           </div>
 
           {/* Controls Row */}
-          <div className="flex items-center justify-between pt-1">
+          <div className="relative flex items-center pt-1">
             {/* Left Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 w-16 sm:w-auto justify-start">
+              {/* Repeat Button */}
+              <button
+                onClick={toggleRepeat}
+                className={`p-1.5 sm:p-2 rounded-lg transition cursor-pointer ${
+                  playbackMode === 'loop'
+                    ? 'text-white bg-neutral-800 border border-neutral-600 shadow-sm'
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
+                }`}
+                title={playbackMode === 'loop' ? 'Повтор трека: Вкл (R)' : 'Повтор трека: Выкл (R)'}
+              >
+                {playbackMode === 'loop' ? <Repeat1 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" /> : <Repeat className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+              </button>
+
+              {/* Shuffle Button */}
+              <button
+                onClick={toggleShuffle}
+                className={`p-1.5 sm:p-2 rounded-lg transition cursor-pointer ${
+                  playbackMode === 'random'
+                    ? 'text-white bg-neutral-800 border border-neutral-600 shadow-sm'
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
+                }`}
+                title={playbackMode === 'random' ? 'Случайное воспроизведение: Вкл (S)' : 'Случайное воспроизведение: Выкл (S)'}
+              >
+                <Shuffle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </button>
+
+              {/* Favorite — desktop only, next to Shuffle */}
               <button
                 onClick={() => toggleFavorite(currentTrack.id)}
-                className={`p-2 rounded-xl transition ${
+                disabled={tracks.length === 0}
+                className={`hidden sm:inline-flex p-1.5 sm:p-2 rounded-lg transition cursor-pointer disabled:opacity-40 ${
                   isFavorite(currentTrack.id)
-                    ? 'text-rose-400 bg-rose-500/10'
-                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
+                    ? 'text-rose-400'
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
                 }`}
                 title={isFavorite(currentTrack.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
               >
-                <Heart className={`w-4 h-4 ${isFavorite(currentTrack.id) ? 'fill-rose-400' : ''}`} />
-              </button>
-              <button
-                onClick={onShare}
-                className="p-2 rounded-xl text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition"
-                title="Поделиться ссылкой на трек"
-              >
-                <Share2 className="w-4 h-4" />
+                <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isFavorite(currentTrack.id) ? 'fill-rose-400' : ''}`} />
               </button>
             </div>
 
-            {/* Playback Controls */}
-            <div className="flex items-center gap-3">
+            {/* Playback Controls — absolutely centered */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-3">
               <button
                 onClick={playPrevious}
-                className="p-2.5 rounded-full text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition"
+                className="p-2 sm:p-2.5 rounded-full text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition cursor-pointer"
                 title="Предыдущий трек (P / ←)"
               >
-                <SkipBack className="w-5 h-5" />
+                <SkipBack className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
               <button
                 onClick={togglePlayPause}
                 id="zen-play-pause-btn"
-                className="p-4 rounded-full bg-neutral-200 hover:bg-neutral-300 text-neutral-950 shadow-lg transition transform active:scale-95"
+                className="p-3 sm:p-4 rounded-full bg-neutral-200 hover:bg-neutral-300 text-neutral-950 shadow-lg transition transform active:scale-95 cursor-pointer"
                 title={isPlaying ? 'Пауза (Пробел)' : 'Воспроизведение (Пробел)'}
               >
-                {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-0.5" />}
+                {isPlaying ? <Pause className="w-5 h-5 sm:w-6 sm:h-6 fill-current" /> : <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current ml-0.5" />}
               </button>
               <button
                 onClick={playNext}
-                className="p-2.5 rounded-full text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition"
+                className="p-2 sm:p-2.5 rounded-full text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition cursor-pointer"
                 title="Следующий трек (N / →)"
               >
-                <SkipForward className="w-5 h-5" />
+                <SkipForward className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
 
-            {/* Volume */}
-            <div className="flex items-center gap-2">
+            {/* Volume — hidden on mobile */}
+            <div className="hidden sm:flex items-center gap-2 ml-auto">
               <button
                 onClick={toggleMute}
-                className="p-2 text-neutral-400 hover:text-neutral-200 transition"
+                className="p-2 text-neutral-400 hover:text-neutral-200 transition cursor-pointer"
                 title={isMuted ? 'Включить звук (M)' : 'Выключить звук (M)'}
               >
                 {isMuted || volume === 0 ? (
@@ -281,7 +276,7 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
                   <Volume2 className="w-4 h-4" />
                 )}
               </button>
-              <div className="relative flex items-center w-20 sm:w-28 h-5 group cursor-pointer">
+              <div className="relative flex items-center w-16 sm:w-20 h-5 group cursor-pointer">
                 <div className="w-full h-1 bg-neutral-800 rounded-full overflow-hidden relative">
                   <div
                     className="absolute left-0 top-0 h-full bg-neutral-300 rounded-full transition-all"
@@ -306,6 +301,21 @@ export const ZenVisualizerModal: React.FC<ZenVisualizerModalProps> = ({ isOpen, 
                   aria-label="Громкость"
                 />
               </div>
+            </div>
+
+            {/* Favorite Button — visible only on mobile, replaces volume */}
+            <div className="flex sm:hidden items-center ml-auto w-16 justify-end">
+              <button
+                onClick={() => toggleFavorite(currentTrack.id)}
+                className={`p-1.5 rounded-lg transition cursor-pointer ${
+                  isFavorite(currentTrack.id)
+                    ? 'text-rose-400 bg-rose-500/10'
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
+                }`}
+                title={isFavorite(currentTrack.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
+              >
+                <Heart className={`w-3.5 h-3.5 ${isFavorite(currentTrack.id) ? 'fill-rose-400' : ''}`} />
+              </button>
             </div>
           </div>
         </div>
