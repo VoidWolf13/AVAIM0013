@@ -6,3 +6,8 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Windows/macOS мусор
+desktop.ini
+Thumbs.db
+.DS_Store
