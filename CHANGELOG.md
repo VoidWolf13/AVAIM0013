@@ -10,6 +10,7 @@
 
 ### Changed
 - `docs/PIPELINE.md`: финальный набор тегов (title, artist, composer, genre, BPM + служебная `TXXX:processed`); для опубликованных — исключение с официальными альбомом и годом; текущий архив заменяется по мере обработки.
+- `docs/PIPELINE.md`: добавлены результаты проверки запуском — выбран Essentia+TensorFlow (venv на Python 3.12), модели жанров скачаны с зеркал (официальный `essentia.upf.edu` недоступен), двухпроходный `loudnorm` подтверждён (−14.1 LUFS, −1.0 dBTP).
 
 
 ### Added
