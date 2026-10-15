@@ -40,7 +40,7 @@
 | artist | `TPE1` | `AVAIM0013` |
 | composer | `TCOM` | `AVAIM0013` |
 | genre | `TCON` | список жанров из анализа (через `/`) |
-| BPM | `TBPM` | из анализа |
+| BPM | `TBPM` | Percival (справочник приоритетнее) |
 
 Служебное поле:
 
