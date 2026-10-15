@@ -152,6 +152,46 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const gainNodeRef = useRef<GainNode | null>(null);
   const isWebAudioInitialized = useRef<boolean>(false);
 
+  // Режим random: «мешок» (shuffle-bag) + история прослушанного.
+  // bagRef — ещё не сыгранные индексы текущего круга (тасуются заново, когда опустеет).
+  // historyRef — порядок воспроизведения, historyPosRef — текущая позиция в нём.
+  const bagRef = useRef<number[]>([]);
+  const bagSizeRef = useRef<number>(0);
+  const historyRef = useRef<number[]>([]);
+  const historyPosRef = useRef<number>(-1);
+  const suppressHistoryRef = useRef<boolean>(false);
+
+  const shuffleIndices = (n: number): number[] => {
+    const arr = Array.from({ length: n }, (_, i) => i);
+    for (let i = n - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
+
+  const recordPlay = (index: number) => {
+    // новый выбор обрезает «будущее» истории (как в браузере)
+    historyRef.current = historyRef.current.slice(0, historyPosRef.current + 1);
+    historyRef.current.push(index);
+    if (historyRef.current.length > 100) historyRef.current.shift();
+    historyPosRef.current = historyRef.current.length - 1;
+  };
+
+  const refillBag = (currentIdx: number) => {
+    // тасуем все индексы и убираем текущий, чтобы он не повторился в этом круге
+    bagRef.current = shuffleIndices(tracks.length).filter((i) => i !== currentIdx);
+    bagSizeRef.current = tracks.length;
+  };
+
+  const drawFromBag = (currentIdx: number): number => {
+    if (bagSizeRef.current !== tracks.length || bagRef.current.length === 0) {
+      refillBag(currentIdx);
+    }
+    if (bagRef.current.length === 0) return currentIdx;  // в списке один трек
+    return bagRef.current.shift() as number;
+  };
+
   const currentTrack = tracks[currentTrackIndex] || tracks[0] || EMPTY_TRACK;
 
   // Sync with GitHub function
@@ -270,6 +310,15 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!targetTrack.filename && !targetTrack.audioUrl) {
       return;
     }
+
+    // мешок: сыгранный трек убираем из текущего круга (чтобы не повторился)
+    const bagIdx = bagRef.current.indexOf(targetIndex);
+    if (bagIdx !== -1) bagRef.current.splice(bagIdx, 1);
+    // история: обычный запуск пишем, навигацию по истории — нет
+    if (!suppressHistoryRef.current) {
+      recordPlay(targetIndex);
+    }
+
     setCurrentTrackIndex(targetIndex);
     setIsLoading(true);
 
@@ -331,11 +380,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (tracks.length === 0) return;
 
     if (playbackMode === 'random') {
-      let randomIndex = Math.floor(Math.random() * tracks.length);
-      if (tracks.length > 1 && randomIndex === currentTrackIndex) {
-        randomIndex = (randomIndex + 1) % tracks.length;
-      }
-      playTrack(randomIndex);
+      // берём следующий из «мешка»: без повторов, пока не проиграют все
+      playTrack(drawFromBag(currentTrackIndex));
     } else {
       const nextIndex = (currentTrackIndex + 1) % tracks.length;
       playTrack(nextIndex);
@@ -353,8 +399,16 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (tracks.length === 0) return;
 
     if (playbackMode === 'random') {
-      const randomIndex = Math.floor(Math.random() * tracks.length);
-      playTrack(randomIndex);
+      // назад — по истории прослушанного
+      if (historyPosRef.current > 0) {
+        historyPosRef.current -= 1;
+        const idx = historyRef.current[historyPosRef.current];
+        suppressHistoryRef.current = true;
+        playTrack(idx);
+        suppressHistoryRef.current = false;
+      } else {
+        playTrack(currentTrackIndex);
+      }
     } else {
       const prevIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
       playTrack(prevIndex);
