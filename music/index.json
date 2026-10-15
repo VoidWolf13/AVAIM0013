@@ -2,14 +2,10 @@
  "generated": "2026-10-15",
  "count": 116,
  "genres": [
-  "Afrobeat",
-  "Alternative Rock",
   "Ambient",
-  "Big Beat",
   "Black Metal",
   "Boom Bap",
   "Breakcore",
-  "Chillwave",
   "Chiptune",
   "Cloud Rap",
   "Dark Ambient",
@@ -18,16 +14,13 @@
   "Donk",
   "Downtempo",
   "Drum n Bass",
-  "Dub",
   "Dub Techno",
-  "Dubstep",
   "Electro",
   "Electro House",
   "Electronic",
-  "Euro House",
   "Experimental",
   "Folk Metal",
-  "Fusion",
+  "Funk",
   "Glitch",
   "Goa Trance",
   "Grime",
@@ -36,32 +29,25 @@
   "Hard House",
   "Hard Trance",
   "Hardcore",
-  "Heavy Metal",
   "Hip Hop",
   "House",
   "IDM",
-  "Indie Rock",
+  "Industrial",
   "Instrumental",
   "Jazz",
-  "Jazz-Funk",
   "Jazzy Hip-Hop",
   "Juke",
   "Jungle",
-  "Makina",
   "Math Rock",
-  "Post Rock",
-  "Power Violence",
-  "Prog Rock",
   "Progressive House",
   "Progressive Trance",
   "Psy-Trance",
-  "Psychedelic Rock",
   "Punk",
   "Rhythmic Noise",
   "Rock",
+  "Schranz",
   "Speedcore",
-  "Synth-pop",
-  "Synthwave",
+  "Tech Trance",
   "Techno",
   "Trance",
   "Trap",
@@ -74,10 +60,7 @@
    "file": "100km.mp3",
    "title": "100km",
    "genres": [
-    "Electronic",
-    "Hardcore",
-    "Experimental",
-    "Makina"
+    "Electronic"
    ],
    "bpm": 90,
    "album": null,
@@ -87,10 +70,7 @@
    "file": "A carefree stroll.mp3",
    "title": "A carefree stroll",
    "genres": [
-    "Jazz",
-    "Afrobeat",
-    "Fusion",
-    "Jazz-Funk"
+    "Jazz"
    ],
    "bpm": 112,
    "album": "Unbroken void",
@@ -125,9 +105,7 @@
    "file": "Ascension.mp3",
    "title": "Ascension",
    "genres": [
-    "Rock",
-    "Prog Rock",
-    "Psychedelic Rock"
+    "Rock"
    ],
    "bpm": 140,
    "album": "Ascension",
@@ -139,8 +117,7 @@
    "genres": [
     "Electronic",
     "Experimental",
-    "Ambient",
-    "Downtempo"
+    "Ambient"
    ],
    "bpm": 120,
    "album": "Unbroken void",
@@ -188,8 +165,7 @@
    "genres": [
     "Electronic",
     "Downtempo",
-    "Ambient",
-    "Drum n Bass"
+    "Ambient"
    ],
    "bpm": 90,
    "album": null,
@@ -239,8 +215,7 @@
    "genres": [
     "Electronic",
     "House",
-    "Techno",
-    "Experimental"
+    "Techno"
    ],
    "bpm": 120,
    "album": "Ascension",
@@ -252,7 +227,8 @@
    "genres": [
     "Electronic",
     "Drum n Bass",
-    "Breakcore"
+    "Breakcore",
+    "Jungle"
    ],
    "bpm": 90,
    "album": null,
@@ -263,8 +239,7 @@
    "title": "Chaos",
    "genres": [
     "Electronic",
-    "Techno",
-    "House"
+    "Techno"
    ],
    "bpm": 140,
    "album": null,
@@ -287,10 +262,7 @@
    "file": "Clear sky.mp3",
    "title": "Clear sky",
    "genres": [
-    "Electronic",
-    "Ambient",
-    "Experimental",
-    "Downtempo"
+    "Electronic"
    ],
    "bpm": 120,
    "album": null,
@@ -303,7 +275,7 @@
     "Electronic",
     "Ambient",
     "Downtempo",
-    "Experimental"
+    "Instrumental"
    ],
    "bpm": 75,
    "album": null,
@@ -314,9 +286,7 @@
    "title": "Cool back",
    "genres": [
     "Electronic",
-    "Electro",
-    "Experimental",
-    "Techno"
+    "Electro"
    ],
    "bpm": 75,
    "album": null,
@@ -339,10 +309,7 @@
    "file": "Crunchy.mp3",
    "title": "Crunchy",
    "genres": [
-    "Electronic",
-    "Experimental",
-    "Electro",
-    "Techno"
+    "Electronic"
    ],
    "bpm": 120,
    "album": "One",
@@ -352,10 +319,7 @@
    "file": "Cry of the soul.mp3",
    "title": "Cry of the soul",
    "genres": [
-    "Electronic",
-    "Electro",
-    "Techno",
-    "House"
+    "Electronic"
    ],
    "bpm": 120,
    "album": "Ascension",
@@ -366,8 +330,7 @@
    "title": "DHAV 01",
    "genres": [
     "Electronic",
-    "House",
-    "Deep House"
+    "House"
    ],
    "bpm": 125,
    "album": null,
@@ -389,10 +352,7 @@
    "file": "Dark entryway.mp3",
    "title": "Dark entryway",
    "genres": [
-    "Electronic",
-    "Experimental",
-    "Ambient",
-    "Downtempo"
+    "Electronic"
    ],
    "bpm": 120,
    "album": "Ascension",
@@ -404,8 +364,7 @@
    "genres": [
     "Rock",
     "Black Metal",
-    "Folk Metal",
-    "Power Violence"
+    "Folk Metal"
    ],
    "bpm": 120,
    "album": null,
@@ -416,9 +375,7 @@
    "title": "Dont make a fuss",
    "genres": [
     "Rock",
-    "Alternative Rock",
-    "Math Rock",
-    "Indie Rock"
+    "Funk"
    ],
    "bpm": 90,
    "album": "One",
@@ -429,8 +386,7 @@
    "title": "Dream Dance",
    "genres": [
     "Electronic",
-    "Progressive House",
-    "House"
+    "Progressive House"
    ],
    "bpm": 125,
    "album": null,
@@ -441,8 +397,7 @@
    "title": "Dreamscape",
    "genres": [
     "Electronic",
-    "House",
-    "Deep House"
+    "House"
    ],
    "bpm": 125,
    "album": null,
@@ -464,10 +419,7 @@
    "file": "Dub Horizon.mp3",
    "title": "Dub Horizon",
    "genres": [
-    "Electronic",
-    "Downtempo",
-    "Dubstep",
-    "Ambient"
+    "Electronic"
    ],
    "bpm": 120,
    "album": "Unbroken void",
@@ -477,10 +429,7 @@
    "file": "Dungeon.mp3",
    "title": "Dungeon",
    "genres": [
-    "Electronic",
-    "Experimental",
-    "Downtempo",
-    "Techno"
+    "Electronic"
    ],
    "bpm": 120,
    "album": null,
@@ -503,8 +452,7 @@
    "title": "EXEM",
    "genres": [
     "Electronic",
-    "Experimental",
-    "Ambient"
+    "Experimental"
    ],
    "bpm": 120,
    "album": "Ascension",
@@ -515,9 +463,7 @@
    "title": "Echo",
    "genres": [
     "Electronic",
-    "Experimental",
-    "Ambient",
-    "Downtempo"
+    "Experimental"
    ],
    "bpm": 80,
    "album": null,
@@ -529,7 +475,8 @@
    "genres": [
     "Electronic",
     "Drum n Bass",
-    "Breakcore"
+    "Breakcore",
+    "Jungle"
    ],
    "bpm": 90,
    "album": null,
@@ -566,8 +513,7 @@
    "title": "Guitar on the wall",
    "genres": [
     "Electronic",
-    "Breakcore",
-    "Drum n Bass"
+    "Breakcore"
    ],
    "bpm": 200,
    "album": "Ascension",
@@ -578,7 +524,9 @@
    "title": "Gun over the fireplace",
    "genres": [
     "Electronic",
-    "Techno"
+    "Techno",
+    "Tech Trance",
+    "Trance"
    ],
    "bpm": 135,
    "album": "One",
@@ -589,9 +537,7 @@
    "title": "Happy 8th of March Marina",
    "genres": [
     "Electronic",
-    "Downtempo",
-    "House",
-    "Deep House"
+    "Downtempo"
    ],
    "bpm": 124,
    "album": "Unbroken void",
@@ -613,10 +559,7 @@
    "file": "Heart.mp3",
    "title": "Heart",
    "genres": [
-    "Electronic",
-    "Grime",
-    "Ambient",
-    "Dubstep"
+    "Electronic"
    ],
    "bpm": 140,
    "album": null,
@@ -652,9 +595,7 @@
    "title": "I didnt call you",
    "genres": [
     "Electronic",
-    "Experimental",
-    "Breakcore",
-    "Hardcore"
+    "Punk"
    ],
    "bpm": 106,
    "album": null,
@@ -690,7 +631,8 @@
    "genres": [
     "Electronic",
     "Experimental",
-    "Glitch"
+    "Glitch",
+    "Techno"
    ],
    "bpm": 120,
    "album": null,
@@ -714,9 +656,7 @@
    "title": "Intellectual acrobatics",
    "genres": [
     "Electronic",
-    "Experimental",
-    "Ambient",
-    "IDM"
+    "Experimental"
    ],
    "bpm": 100,
    "album": null,
@@ -727,9 +667,7 @@
    "title": "Interesting start",
    "genres": [
     "Electronic",
-    "Electro",
-    "Chillwave",
-    "Dubstep"
+    "Electro"
    ],
    "bpm": 150,
    "album": null,
@@ -740,9 +678,7 @@
    "title": "Journey into reverie",
    "genres": [
     "Electronic",
-    "Downtempo",
-    "Drum n Bass",
-    "Ambient"
+    "Downtempo"
    ],
    "bpm": 120,
    "album": null,
@@ -754,8 +690,7 @@
    "genres": [
     "Electronic",
     "Breakcore",
-    "Speedcore",
-    "Big Beat"
+    "Speedcore"
    ],
    "bpm": 120,
    "album": "Ascension",
@@ -766,7 +701,9 @@
    "title": "Long way",
    "genres": [
     "Electronic",
-    "Breakcore"
+    "Breakcore",
+    "IDM",
+    "Drum n Bass"
    ],
    "bpm": 100,
    "album": null,
@@ -776,10 +713,7 @@
    "file": "Longing.mp3",
    "title": "Longing",
    "genres": [
-    "Electronic",
-    "Downtempo",
-    "Experimental",
-    "Ambient"
+    "Electronic"
    ],
    "bpm": 180,
    "album": null,
@@ -790,9 +724,7 @@
    "title": "Love",
    "genres": [
     "Electronic",
-    "Trance",
-    "Techno",
-    "Hard Trance"
+    "Trance"
    ],
    "bpm": 140,
    "album": null,
@@ -804,8 +736,7 @@
    "genres": [
     "Electronic",
     "IDM",
-    "Glitch",
-    "Ambient"
+    "Glitch"
    ],
    "bpm": 140,
    "album": null,
@@ -816,8 +747,7 @@
    "title": "Mad day",
    "genres": [
     "Electronic",
-    "House",
-    "Deep House"
+    "House"
    ],
    "bpm": 120,
    "album": null,
@@ -827,10 +757,7 @@
    "file": "Melancholy.mp3",
    "title": "Melancholy",
    "genres": [
-    "Electronic",
-    "Ambient",
-    "Experimental",
-    "Downtempo"
+    "Electronic"
    ],
    "bpm": 75,
    "album": "Ascension",
@@ -852,10 +779,7 @@
    "file": "Metal can be soft.mp3",
    "title": "Metal can be soft",
    "genres": [
-    "Rock",
-    "Heavy Metal",
-    "Hardcore",
-    "Alternative Rock"
+    "Rock"
    ],
    "bpm": 85,
    "album": "One",
@@ -865,8 +789,7 @@
    "file": "Mute.mp3",
    "title": "Mute",
    "genres": [
-    "Electronic",
-    "Downtempo"
+    "Electronic"
    ],
    "bpm": 90,
    "album": null,
@@ -877,9 +800,7 @@
    "title": "Nice time",
    "genres": [
     "Electronic",
-    "Electro",
-    "Synthwave",
-    "Chiptune"
+    "Electro"
    ],
    "bpm": 125,
    "album": null,
@@ -889,9 +810,7 @@
    "file": "No illusions.mp3",
    "title": "No illusions",
    "genres": [
-    "Electronic",
-    "Ambient",
-    "Experimental"
+    "Electronic"
    ],
    "bpm": 120,
    "album": null,
@@ -927,7 +846,8 @@
    "genres": [
     "Electronic",
     "Ambient",
-    "Dub Techno"
+    "Dub Techno",
+    "Downtempo"
    ],
    "bpm": 120,
    "album": "Unbroken void",
@@ -950,8 +870,7 @@
    "title": "Offscreen",
    "genres": [
     "Electronic",
-    "Ambient",
-    "Downtempo"
+    "Ambient"
    ],
    "bpm": 80,
    "album": null,
@@ -961,10 +880,7 @@
    "file": "Oh come on.mp3",
    "title": "Oh come on",
    "genres": [
-    "Rock",
-    "Post Rock",
-    "Alternative Rock",
-    "Indie Rock"
+    "Rock"
    ],
    "bpm": 140,
    "album": "Unbroken void",
@@ -988,8 +904,7 @@
    "genres": [
     "Electronic",
     "Downtempo",
-    "Trip Hop",
-    "Dub"
+    "Trip Hop"
    ],
    "bpm": 90,
    "album": null,
@@ -999,10 +914,7 @@
    "file": "Oooommm.mp3",
    "title": "Oooommm",
    "genres": [
-    "Electronic",
-    "Techno",
-    "House",
-    "Experimental"
+    "Electronic"
    ],
    "bpm": 120,
    "album": null,
@@ -1062,8 +974,7 @@
    "title": "Pianist",
    "genres": [
     "Electronic",
-    "UK Garage",
-    "House"
+    "UK Garage"
    ],
    "bpm": 141,
    "album": null,
@@ -1086,9 +997,8 @@
    "title": "RAV13",
    "genres": [
     "Electronic",
-    "Experimental",
-    "Dubstep",
-    "Ambient"
+    "Cloud Rap",
+    "Trap"
    ],
    "bpm": 70,
    "album": "Ascension",
@@ -1100,8 +1010,7 @@
    "genres": [
     "Electronic",
     "Drum n Bass",
-    "Experimental",
-    "Breakcore"
+    "Experimental"
    ],
    "bpm": 90,
    "album": null,
@@ -1111,10 +1020,7 @@
    "file": "Requiem for sunset shadows.mp3",
    "title": "Requiem for sunset shadows",
    "genres": [
-    "Electronic",
-    "Ambient",
-    "Techno",
-    "Electro"
+    "Electronic"
    ],
    "bpm": 120,
    "album": null,
@@ -1137,10 +1043,7 @@
    "file": "Retro.mp3",
    "title": "Retro",
    "genres": [
-    "Electronic",
-    "Techno",
-    "House",
-    "Euro House"
+    "Electronic"
    ],
    "bpm": 140,
    "album": null,
@@ -1152,7 +1055,8 @@
    "genres": [
     "Electronic",
     "Psy-Trance",
-    "Progressive Trance"
+    "Progressive Trance",
+    "Tech Trance"
    ],
    "bpm": 138,
    "album": null,
@@ -1163,8 +1067,7 @@
    "title": "Sanitation day on Venus",
    "genres": [
     "Electronic",
-    "Experimental",
-    "Ambient"
+    "Experimental"
    ],
    "bpm": 154,
    "album": "Unbroken void",
@@ -1187,8 +1090,7 @@
    "genres": [
     "Electronic",
     "House",
-    "Deep House",
-    "Synth-pop"
+    "Deep House"
    ],
    "bpm": 120,
    "album": null,
@@ -1199,9 +1101,7 @@
    "title": "Shake your head",
    "genres": [
     "Electronic",
-    "Downtempo",
-    "Trip Hop",
-    "Dub"
+    "Downtempo"
    ],
    "bpm": 77,
    "album": "One",
@@ -1213,8 +1113,7 @@
    "genres": [
     "Electronic",
     "Downtempo",
-    "Trip Hop",
-    "Ambient"
+    "Trip Hop"
    ],
    "bpm": 78,
    "album": "One",
@@ -1224,10 +1123,7 @@
    "file": "Sneeze.mp3",
    "title": "Sneeze",
    "genres": [
-    "Electronic",
-    "Drum n Bass",
-    "IDM",
-    "Experimental"
+    "Electronic"
    ],
    "bpm": 86,
    "album": null,
@@ -1248,9 +1144,7 @@
    "file": "Space vacuum.mp3",
    "title": "Space vacuum",
    "genres": [
-    "Electronic",
-    "Ambient",
-    "Experimental"
+    "Electronic"
    ],
    "bpm": 80,
    "album": "Unbroken void",
@@ -1261,7 +1155,9 @@
    "title": "Storm",
    "genres": [
     "Electronic",
-    "Techno"
+    "Techno",
+    "Goa Trance",
+    "Schranz"
    ],
    "bpm": 68,
    "album": null,
@@ -1272,9 +1168,7 @@
    "title": "Stupidity",
    "genres": [
     "Electronic",
-    "Trance",
-    "Hard Trance",
-    "Drum n Bass"
+    "Trance"
    ],
    "bpm": 76,
    "album": null,
@@ -1348,7 +1242,8 @@
    "genres": [
     "Electronic",
     "Techno",
-    "Rhythmic Noise"
+    "Rhythmic Noise",
+    "Industrial"
    ],
    "bpm": 150,
    "album": null,
@@ -1359,9 +1254,7 @@
    "title": "Thats her",
    "genres": [
     "Rock",
-    "Math Rock",
-    "Alternative Rock",
-    "Punk"
+    "Math Rock"
    ],
    "bpm": 87,
    "album": null,
@@ -1372,9 +1265,7 @@
    "title": "The backside",
    "genres": [
     "Electronic",
-    "Ambient",
-    "Downtempo",
-    "Experimental"
+    "Ambient"
    ],
    "bpm": 90,
    "album": null,
@@ -1411,8 +1302,7 @@
    "genres": [
     "Electronic",
     "Experimental",
-    "Ambient",
-    "Chiptune"
+    "Ambient"
    ],
    "bpm": 87,
    "album": null,
@@ -1438,7 +1328,7 @@
     "Electronic",
     "Halftime",
     "Juke",
-    "Dubstep"
+    "Trap"
    ],
    "bpm": 80,
    "album": null,
@@ -1449,9 +1339,7 @@
    "title": "Velvet Skies",
    "genres": [
     "Electronic",
-    "Ambient",
-    "Synthwave",
-    "Downtempo"
+    "Ambient"
    ],
    "bpm": 128,
    "album": null,
@@ -1488,8 +1376,7 @@
    "title": "Wisdom of elders",
    "genres": [
     "Electronic",
-    "Experimental",
-    "Techno"
+    "Experimental"
    ],
    "bpm": 120,
    "album": null,
@@ -1501,8 +1388,7 @@
    "genres": [
     "Electronic",
     "Ambient",
-    "Experimental",
-    "IDM"
+    "Cloud Rap"
    ],
    "bpm": 150,
    "album": null,
