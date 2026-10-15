@@ -214,16 +214,16 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
 
           {/* Favorite — desktop only, next to Shuffle */}
           <button
-            onClick={() => toggleFavorite(currentTrack.id)}
+            onClick={() => toggleFavorite(currentTrack.filename)}
             disabled={tracks.length === 0}
             className={`hidden sm:inline-flex p-1.5 sm:p-2 rounded-lg text-xs transition cursor-pointer disabled:opacity-40 ${
-              isFavorite(currentTrack.id)
+              isFavorite(currentTrack.filename)
                 ? 'text-rose-400'
                 : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
             }`}
-            title={isFavorite(currentTrack.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
+            title={isFavorite(currentTrack.filename) ? 'Удалить из избранного' : 'Добавить в избранное'}
           >
-            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isFavorite(currentTrack.id) ? 'fill-rose-400' : ''}`} />
+            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isFavorite(currentTrack.filename) ? 'fill-rose-400' : ''}`} />
           </button>
         </div>
 
@@ -303,16 +303,16 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
         {/* Right: Favorite Button — visible only on mobile, replaces volume */}
         <div className="flex sm:hidden items-center order-3 w-16 justify-end">
           <button
-            onClick={() => toggleFavorite(currentTrack.id)}
+            onClick={() => toggleFavorite(currentTrack.filename)}
             disabled={tracks.length === 0}
             className={`p-1.5 rounded-lg transition cursor-pointer disabled:opacity-40 ${
-              isFavorite(currentTrack.id)
+              isFavorite(currentTrack.filename)
                 ? 'text-rose-400'
                 : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/70'
             }`}
-            title={isFavorite(currentTrack.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
+            title={isFavorite(currentTrack.filename) ? 'Удалить из избранного' : 'Добавить в избранное'}
           >
-            <Heart className={`w-4 h-4 ${isFavorite(currentTrack.id) ? 'fill-rose-400' : ''}`} />
+            <Heart className={`w-4 h-4 ${isFavorite(currentTrack.filename) ? 'fill-rose-400' : ''}`} />
           </button>
         </div>
       </div>

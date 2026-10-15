@@ -65,7 +65,7 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
       const matchesSearch = !q || track.title.toLowerCase().includes(q);
 
       // Favorites filter (compatible with everything else)
-      const matchesFavorites = !onlyFavorites || favorites.includes(track.id);
+      const matchesFavorites = !onlyFavorites || favorites.includes(track.filename);
 
       // Genre filter: OR-logic across selected genres
       const trackGenres = track.genres || [];
@@ -286,7 +286,7 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
               filteredTracks.map((track, index) => {
                 const isCurrent = currentTrack.id === track.id || currentTrack.filename === track.filename;
                 const isThisPlaying = isCurrent && isPlaying;
-                const isFav = isFavorite(track.id);
+                const isFav = isFavorite(track.filename);
 
                 return (
                   <div
@@ -340,7 +340,7 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
                     <div className="flex items-center gap-0.5 sm:gap-1 shrink-0 pl-1 sm:pl-2">
                       <button
                         onClick={() => {
-                          toggleFavorite(track.id);
+                          toggleFavorite(track.filename);
                           onShowToast(isFav ? 'Удалено из избранного' : 'Добавлено в избранное');
                         }}
                         className={`p-0.5 sm:p-1.5 rounded-md transition cursor-pointer ${

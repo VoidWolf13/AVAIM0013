@@ -28,7 +28,7 @@ interface AudioContextType {
   eqSettings: EQSettings;
   sleepTimerRemaining: number | null;
   sleepTimerDuration: number | null;
-  favorites: number[];
+  favorites: string[];
   analyserNode: AnalyserNode | null;
   audioElement: HTMLAudioElement | null;
   isSyncingGitHub: boolean;
@@ -51,8 +51,8 @@ interface AudioContextType {
   setEQPreset: (preset: EQPreset) => void;
   setCustomEQ: (band: 'bass' | 'mid' | 'treble', value: number) => void;
   setSleepTimer: (minutes: number | null) => void;
-  toggleFavorite: (trackId: number) => void;
-  isFavorite: (trackId: number) => boolean;
+  toggleFavorite: (trackKey: string) => void;
+  isFavorite: (trackKey: string) => boolean;
   syncWithGitHub: (customConfig?: GitHubSyncConfig) => Promise<{ success: boolean; count?: number; error?: string }>;
   updateGitHubConfig: (config: GitHubSyncConfig) => void;
   resetToDefaultTracks: () => void;
@@ -131,7 +131,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [sleepTimerRemaining, setSleepTimerRemaining] = useState<number | null>(null);
   const [sleepTimerDuration, setSleepTimerDuration] = useState<number | null>(null);
   
-  const [favorites, setFavorites] = useState<number[]>(() => {
+  // Избранное хранится по имени файла (стабильный ключ, не зависит от порядка сканирования)
+  const [favorites, setFavorites] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('anton_void_favorites');
       return saved ? JSON.parse(saved) : [];
@@ -498,19 +499,19 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => clearInterval(interval);
   }, [sleepTimerRemaining]);
 
-  // Favorites
-  const toggleFavorite = useCallback((trackId: number) => {
+  // Favorites — ключ = имя файла (стабильно при пересборке списка)
+  const toggleFavorite = useCallback((trackKey: string) => {
     setFavorites(prev => {
-      const next = prev.includes(trackId)
-        ? prev.filter(id => id !== trackId)
-        : [...prev, trackId];
+      const next = prev.includes(trackKey)
+        ? prev.filter(k => k !== trackKey)
+        : [...prev, trackKey];
       localStorage.setItem('anton_void_favorites', JSON.stringify(next));
       return next;
     });
   }, []);
 
-  const isFavorite = useCallback((trackId: number) => {
-    return favorites.includes(trackId);
+  const isFavorite = useCallback((trackKey: string) => {
+    return favorites.includes(trackKey);
   }, [favorites]);
 
   // User custom metadata update (genre, mood, description, bpm)

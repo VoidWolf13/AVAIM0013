@@ -7,8 +7,8 @@
     overflow-x: hidden;
     overflow-y: scroll;
     background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/background.jpg');
-    background-size: 100% auto;
-    background-position: center top;
+    background-size: cover;
+    background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-color: #09090b;
@@ -26,10 +26,6 @@
   @media (max-width: 640px) {
     html {
       font-size: 14px;
-    }
-    
-    body {
-      background-size: 150% auto;
     }
   }
 }
