@@ -8,7 +8,6 @@ import {
   getCachedGitHubTracks,
   cacheGitHubTracks,
   saveCustomTrackMetadata,
-  DEFAULT_GITHUB_CONFIG,
 } from '../utils/githubScanner';
 
 interface AudioContextType {

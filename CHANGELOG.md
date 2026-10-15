@@ -3,6 +3,20 @@
 Формат — Keep a Changelog (keepachangelog.com/ru/1.1.0/).
 Версии — SemVer (semver.org/lang/ru/).
 
+## [1.7.1] — 2026-10-15
+
+### Removed
+- `src/utils/id3Parser.ts` — мёртвый модуль (ни одного импорта; использовал `Buffer`, в браузере упал бы).
+- `scripts/addTags.js`, `scripts/addTags.mjs` — скрипты тегирования через `node-id3`, не нужны (теги пишет конвейер `avaim`).
+- Зависимости `node-id3`, `autoprefixer`, `esbuild`, `tsx` — не использовались в сборке и скриптах.
+- Мёртвые экспорты: `inferMoodAndCategory` (githubScanner), `ARTIST_DESCRIPTION`, `GITHUB_REPO_URL`, `GITHUB_PAGES_URL` (data/tracks).
+
+### Changed
+- `PlayerControls`: убраны неиспользуемые импорты (`Radio`, `Activity`, `Disc3`), деструктуризация `setVisualizerMode`, локальная `audioUrl` и массив `visModes`; проп `onOpenZen` удалён из интерфейса.
+- `AudioContext`: убран неиспользуемый импорт `DEFAULT_GITHUB_CONFIG`.
+- `package.json`: `vite` больше не дублируется в `dependencies` и `devDependencies`; скрипт `clean` чистит только `dist` (упоминание несуществующего `server.js` убрано).
+- Транзитивные уязвимости закрыты (`npm audit fix`): 2 high → 0.
+
 ## [1.7.0] — 2026-10-15
 
 ### Added

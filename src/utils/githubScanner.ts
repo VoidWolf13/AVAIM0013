@@ -96,25 +96,6 @@ export function formatAudioTitle(filename: string): string {
     .join(' ') || withoutExt;
 }
 
-// Clean category and format metadata from filename & extension
-export function inferMoodAndCategory(filename: string, format: string): {
-  category: Track['category'];
-  moodTag: string;
-  description: string;
-  bitrate: string;
-} {
-  const isFlac = format.toLowerCase() === 'flac';
-  const isWav = format.toLowerCase() === 'wav';
-  const bitrate = isFlac ? 'Lossless FLAC' : isWav ? 'Uncompressed WAV' : '320 kbps High Quality';
-
-  return {
-    category: format.toLowerCase(),
-    moodTag: 'AVAIM0013',
-    description: 'Оригинальная композиция проекта AVAIM0013.',
-    bitrate,
-  };
-}
-
 interface GitHubContentItem {
   name: string;
   path: string;

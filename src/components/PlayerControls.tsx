@@ -1,8 +1,7 @@
 import React from 'react';
 import { useAudio } from '../context/AudioContext';
 import { VisualizerCanvas } from './VisualizerCanvas';
-import { VisualizerMode } from '../types';
-import { getTrackAudioUrl, ARTIST_NAME } from '../data/tracks';
+import { ARTIST_NAME } from '../data/tracks';
 import { formatTime } from '../utils/formatTime';
 import {
   Play,
@@ -16,10 +15,6 @@ import {
   VolumeX,
   Volume1,
   Heart,
-  Radio,
-  Activity,
-  Disc3,
-  Sparkles,
   Sliders,
   Moon,
 } from 'lucide-react';
@@ -27,7 +22,6 @@ import {
 interface PlayerControlsProps {
   onOpenEQ: () => void;
   onOpenSleep: () => void;
-  onOpenZen?: () => void;
   onShowToast: (text: string) => void;
 }
 
@@ -54,13 +48,11 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
     setVolume,
     toggleMute,
     setPlaybackMode,
-    setVisualizerMode,
     toggleFavorite,
     isFavorite,
     sleepTimerRemaining,
   } = useAudio();
 
-  const audioUrl = getTrackAudioUrl(currentTrack);
   const bufferedPercent = duration ? (buffered / duration) * 100 : 0;
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
 
@@ -83,10 +75,6 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
       onShowToast('Повтор трека: Вкл');
     }
   };
-
-  const visModes: { id: VisualizerMode; label: string; icon: React.ReactNode }[] = [
-    { id: 'particles', label: 'Космос', icon: <Sparkles className="w-3.5 h-3.5" /> },
-  ];
 
   return (
     <section
