@@ -1,0 +1,1524 @@
+{
+ "generated": "2026-10-15",
+ "count": 116,
+ "genres": [
+  "Afrobeat",
+  "Alternative Rock",
+  "Ambient",
+  "Big Beat",
+  "Black Metal",
+  "Boom Bap",
+  "Breakcore",
+  "Chillwave",
+  "Chiptune",
+  "Cloud Rap",
+  "Dark Ambient",
+  "Deep House",
+  "Deep Techno",
+  "Donk",
+  "Downtempo",
+  "Drum n Bass",
+  "Dub",
+  "Dub Techno",
+  "Dubstep",
+  "Electro",
+  "Electro House",
+  "Electronic",
+  "Euro House",
+  "Experimental",
+  "Folk Metal",
+  "Fusion",
+  "Glitch",
+  "Goa Trance",
+  "Grime",
+  "Halftime",
+  "Hands Up",
+  "Hard House",
+  "Hard Trance",
+  "Hardcore",
+  "Heavy Metal",
+  "Hip Hop",
+  "House",
+  "IDM",
+  "Indie Rock",
+  "Instrumental",
+  "Jazz",
+  "Jazz-Funk",
+  "Jazzy Hip-Hop",
+  "Juke",
+  "Jungle",
+  "Makina",
+  "Math Rock",
+  "Post Rock",
+  "Power Violence",
+  "Prog Rock",
+  "Progressive House",
+  "Progressive Trance",
+  "Psy-Trance",
+  "Psychedelic Rock",
+  "Punk",
+  "Rhythmic Noise",
+  "Rock",
+  "Speedcore",
+  "Synth-pop",
+  "Synthwave",
+  "Techno",
+  "Trance",
+  "Trap",
+  "Trip Hop",
+  "Tropical House",
+  "UK Garage"
+ ],
+ "tracks": [
+  {
+   "file": "100km.mp3",
+   "title": "100km",
+   "genres": [
+    "Electronic",
+    "Hardcore",
+    "Experimental",
+    "Makina"
+   ],
+   "bpm": 90,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "A carefree stroll.mp3",
+   "title": "A carefree stroll",
+   "genres": [
+    "Jazz",
+    "Afrobeat",
+    "Fusion",
+    "Jazz-Funk"
+   ],
+   "bpm": 112,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "A lulling draft.mp3",
+   "title": "A lulling draft",
+   "genres": [
+    "Electronic",
+    "Downtempo",
+    "Ambient"
+   ],
+   "bpm": 90,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Aaaaaaaaa.mp3",
+   "title": "Aaaaaaaaa",
+   "genres": [
+    "Electronic",
+    "Jungle",
+    "Drum n Bass",
+    "Breakcore"
+   ],
+   "bpm": 95,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Ascension.mp3",
+   "title": "Ascension",
+   "genres": [
+    "Rock",
+    "Prog Rock",
+    "Psychedelic Rock"
+   ],
+   "bpm": 140,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "Atmospheric noise.mp3",
+   "title": "Atmospheric noise",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Ambient",
+    "Downtempo"
+   ],
+   "bpm": 120,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Back in the ranks.mp3",
+   "title": "Back in the ranks",
+   "genres": [
+    "Electronic",
+    "Downtempo"
+   ],
+   "bpm": 91,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Bass Odyssey.mp3",
+   "title": "Bass Odyssey",
+   "genres": [
+    "Electronic",
+    "Electro House",
+    "Deep House",
+    "House"
+   ],
+   "bpm": 126,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Boom boom.mp3",
+   "title": "Boom boom",
+   "genres": [
+    "Electronic",
+    "House",
+    "Deep House"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Bored pianist.mp3",
+   "title": "Bored pianist",
+   "genres": [
+    "Electronic",
+    "Downtempo",
+    "Ambient",
+    "Drum n Bass"
+   ],
+   "bpm": 90,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Boredom.mp3",
+   "title": "Boredom",
+   "genres": [
+    "Hip Hop",
+    "Trap",
+    "Cloud Rap"
+   ],
+   "bpm": 118,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "Brain blender.mp3",
+   "title": "Brain blender",
+   "genres": [
+    "Electronic",
+    "Goa Trance",
+    "Techno",
+    "Psy-Trance"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Broken Reflections.mp3",
+   "title": "Broken Reflections",
+   "genres": [
+    "Electronic",
+    "House",
+    "Deep House",
+    "Tropical House"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Carousel.mp3",
+   "title": "Carousel",
+   "genres": [
+    "Electronic",
+    "House",
+    "Techno",
+    "Experimental"
+   ],
+   "bpm": 120,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "Cartographic cretinism.mp3",
+   "title": "Cartographic cretinism",
+   "genres": [
+    "Electronic",
+    "Drum n Bass",
+    "Breakcore"
+   ],
+   "bpm": 90,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Chaos.mp3",
+   "title": "Chaos",
+   "genres": [
+    "Electronic",
+    "Techno",
+    "House"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Cinematic sky.mp3",
+   "title": "Cinematic sky",
+   "genres": [
+    "Hip Hop",
+    "Instrumental",
+    "Boom Bap",
+    "Jazzy Hip-Hop"
+   ],
+   "bpm": 93,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Clear sky.mp3",
+   "title": "Clear sky",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Experimental",
+    "Downtempo"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Cold Sheets.mp3",
+   "title": "Cold Sheets",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Downtempo",
+    "Experimental"
+   ],
+   "bpm": 75,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Cool back.mp3",
+   "title": "Cool back",
+   "genres": [
+    "Electronic",
+    "Electro",
+    "Experimental",
+    "Techno"
+   ],
+   "bpm": 75,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Crazy bunny.mp3",
+   "title": "Crazy bunny",
+   "genres": [
+    "Electronic",
+    "Drum n Bass",
+    "Jungle",
+    "Breakcore"
+   ],
+   "bpm": 90,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Crunchy.mp3",
+   "title": "Crunchy",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Electro",
+    "Techno"
+   ],
+   "bpm": 120,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Cry of the soul.mp3",
+   "title": "Cry of the soul",
+   "genres": [
+    "Electronic",
+    "Electro",
+    "Techno",
+    "House"
+   ],
+   "bpm": 120,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "DHAV 01.mp3",
+   "title": "DHAV 01",
+   "genres": [
+    "Electronic",
+    "House",
+    "Deep House"
+   ],
+   "bpm": 125,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Dance.mp3",
+   "title": "Dance",
+   "genres": [
+    "Electronic",
+    "UK Garage",
+    "Grime"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Dark entryway.mp3",
+   "title": "Dark entryway",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Ambient",
+    "Downtempo"
+   ],
+   "bpm": 120,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "Dark grunge.mp3",
+   "title": "Dark grunge",
+   "genres": [
+    "Rock",
+    "Black Metal",
+    "Folk Metal",
+    "Power Violence"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Dont make a fuss.mp3",
+   "title": "Dont make a fuss",
+   "genres": [
+    "Rock",
+    "Alternative Rock",
+    "Math Rock",
+    "Indie Rock"
+   ],
+   "bpm": 90,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Dream Dance.mp3",
+   "title": "Dream Dance",
+   "genres": [
+    "Electronic",
+    "Progressive House",
+    "House"
+   ],
+   "bpm": 125,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Dreamscape.mp3",
+   "title": "Dreamscape",
+   "genres": [
+    "Electronic",
+    "House",
+    "Deep House"
+   ],
+   "bpm": 125,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Driving.mp3",
+   "title": "Driving",
+   "genres": [
+    "Electronic",
+    "Hardcore",
+    "Techno"
+   ],
+   "bpm": 150,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Dub Horizon.mp3",
+   "title": "Dub Horizon",
+   "genres": [
+    "Electronic",
+    "Downtempo",
+    "Dubstep",
+    "Ambient"
+   ],
+   "bpm": 120,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Dungeon.mp3",
+   "title": "Dungeon",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Downtempo",
+    "Techno"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "EX01.mp3",
+   "title": "EX01",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Ambient"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "EXEM.mp3",
+   "title": "EXEM",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Ambient"
+   ],
+   "bpm": 120,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "Echo.mp3",
+   "title": "Echo",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Ambient",
+    "Downtempo"
+   ],
+   "bpm": 80,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Expectation.mp3",
+   "title": "Expectation",
+   "genres": [
+    "Electronic",
+    "Drum n Bass",
+    "Breakcore"
+   ],
+   "bpm": 90,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Experiment 258.mp3",
+   "title": "Experiment 258",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Chiptune",
+    "Techno"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Gloomy summer.mp3",
+   "title": "Gloomy summer",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Ambient",
+    "Techno"
+   ],
+   "bpm": 120,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Guitar on the wall.mp3",
+   "title": "Guitar on the wall",
+   "genres": [
+    "Electronic",
+    "Breakcore",
+    "Drum n Bass"
+   ],
+   "bpm": 200,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "Gun over the fireplace.mp3",
+   "title": "Gun over the fireplace",
+   "genres": [
+    "Electronic",
+    "Techno"
+   ],
+   "bpm": 135,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Happy 8th of March Marina.mp3",
+   "title": "Happy 8th of March Marina",
+   "genres": [
+    "Electronic",
+    "Downtempo",
+    "House",
+    "Deep House"
+   ],
+   "bpm": 124,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Harmony of Light.mp3",
+   "title": "Harmony of Light",
+   "genres": [
+    "Electronic",
+    "Downtempo",
+    "Ambient"
+   ],
+   "bpm": 120,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Heart.mp3",
+   "title": "Heart",
+   "genres": [
+    "Electronic",
+    "Grime",
+    "Ambient",
+    "Dubstep"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Hey morning.mp3",
+   "title": "Hey morning",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Glitch",
+    "IDM"
+   ],
+   "bpm": 120,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Hey you.mp3",
+   "title": "Hey you",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Experimental"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "I didnt call you.mp3",
+   "title": "I didnt call you",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Breakcore",
+    "Hardcore"
+   ],
+   "bpm": 106,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "I wanted to rest.mp3",
+   "title": "I wanted to rest",
+   "genres": [
+    "Electronic",
+    "Downtempo"
+   ],
+   "bpm": 90,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Immersion in illusions.mp3",
+   "title": "Immersion in illusions",
+   "genres": [
+    "Electronic",
+    "Deep Techno",
+    "Techno",
+    "House"
+   ],
+   "bpm": 125,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Inevitability.mp3",
+   "title": "Inevitability",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Glitch"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Infiniti.mp3",
+   "title": "Infiniti",
+   "genres": [
+    "Electronic",
+    "Trance",
+    "Techno",
+    "Hard Trance"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Intellectual acrobatics.mp3",
+   "title": "Intellectual acrobatics",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Ambient",
+    "IDM"
+   ],
+   "bpm": 100,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Interesting start.mp3",
+   "title": "Interesting start",
+   "genres": [
+    "Electronic",
+    "Electro",
+    "Chillwave",
+    "Dubstep"
+   ],
+   "bpm": 150,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Journey into reverie.mp3",
+   "title": "Journey into reverie",
+   "genres": [
+    "Electronic",
+    "Downtempo",
+    "Drum n Bass",
+    "Ambient"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Knock knees.mp3",
+   "title": "Knock knees",
+   "genres": [
+    "Electronic",
+    "Breakcore",
+    "Speedcore",
+    "Big Beat"
+   ],
+   "bpm": 120,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "Long way.mp3",
+   "title": "Long way",
+   "genres": [
+    "Electronic",
+    "Breakcore"
+   ],
+   "bpm": 100,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Longing.mp3",
+   "title": "Longing",
+   "genres": [
+    "Electronic",
+    "Downtempo",
+    "Experimental",
+    "Ambient"
+   ],
+   "bpm": 180,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Love.mp3",
+   "title": "Love",
+   "genres": [
+    "Electronic",
+    "Trance",
+    "Techno",
+    "Hard Trance"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "M1.mp3",
+   "title": "M1",
+   "genres": [
+    "Electronic",
+    "IDM",
+    "Glitch",
+    "Ambient"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Mad day.mp3",
+   "title": "Mad day",
+   "genres": [
+    "Electronic",
+    "House",
+    "Deep House"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Melancholy.mp3",
+   "title": "Melancholy",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Experimental",
+    "Downtempo"
+   ],
+   "bpm": 75,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "Memories seen.mp3",
+   "title": "Memories seen",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Downtempo"
+   ],
+   "bpm": 80,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Metal can be soft.mp3",
+   "title": "Metal can be soft",
+   "genres": [
+    "Rock",
+    "Heavy Metal",
+    "Hardcore",
+    "Alternative Rock"
+   ],
+   "bpm": 85,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Mute.mp3",
+   "title": "Mute",
+   "genres": [
+    "Electronic",
+    "Downtempo"
+   ],
+   "bpm": 90,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Nice time.mp3",
+   "title": "Nice time",
+   "genres": [
+    "Electronic",
+    "Electro",
+    "Synthwave",
+    "Chiptune"
+   ],
+   "bpm": 125,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "No illusions.mp3",
+   "title": "No illusions",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Experimental"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "OST 0001.mp3",
+   "title": "OST 0001",
+   "genres": [
+    "Electronic",
+    "Ambient"
+   ],
+   "bpm": 70,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "OST 0002.mp3",
+   "title": "OST 0002",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Experimental",
+    "Dub Techno"
+   ],
+   "bpm": 86,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Oblivion.mp3",
+   "title": "Oblivion",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Dub Techno"
+   ],
+   "bpm": 120,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Office Space.mp3",
+   "title": "Office Space",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Experimental"
+   ],
+   "bpm": 96,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "Offscreen.mp3",
+   "title": "Offscreen",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Downtempo"
+   ],
+   "bpm": 80,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Oh come on.mp3",
+   "title": "Oh come on",
+   "genres": [
+    "Rock",
+    "Post Rock",
+    "Alternative Rock",
+    "Indie Rock"
+   ],
+   "bpm": 140,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Old cigar.mp3",
+   "title": "Old cigar",
+   "genres": [
+    "Hip Hop",
+    "Cloud Rap",
+    "Trap"
+   ],
+   "bpm": 120,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "One.mp3",
+   "title": "One",
+   "genres": [
+    "Electronic",
+    "Downtempo",
+    "Trip Hop",
+    "Dub"
+   ],
+   "bpm": 90,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Oooommm.mp3",
+   "title": "Oooommm",
+   "genres": [
+    "Electronic",
+    "Techno",
+    "House",
+    "Experimental"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Orchestra pit.mp3",
+   "title": "Orchestra pit",
+   "genres": [
+    "Hip Hop",
+    "Trap",
+    "Cloud Rap"
+   ],
+   "bpm": 78,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Outright laziness.mp3",
+   "title": "Outright laziness",
+   "genres": [
+    "Electronic",
+    "Ambient"
+   ],
+   "bpm": 65,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Over the hill.mp3",
+   "title": "Over the hill",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "IDM",
+    "Experimental"
+   ],
+   "bpm": 120,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Pain.mp3",
+   "title": "Pain",
+   "genres": [
+    "Electronic",
+    "Trance",
+    "Hands Up",
+    "Hard Trance"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Pianist.mp3",
+   "title": "Pianist",
+   "genres": [
+    "Electronic",
+    "UK Garage",
+    "House"
+   ],
+   "bpm": 141,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Quarter.mp3",
+   "title": "Quarter",
+   "genres": [
+    "Electronic",
+    "Techno",
+    "House"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "RAV13.mp3",
+   "title": "RAV13",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Dubstep",
+    "Ambient"
+   ],
+   "bpm": 70,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "Race.mp3",
+   "title": "Race",
+   "genres": [
+    "Electronic",
+    "Drum n Bass",
+    "Experimental",
+    "Breakcore"
+   ],
+   "bpm": 90,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Requiem for sunset shadows.mp3",
+   "title": "Requiem for sunset shadows",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Techno",
+    "Electro"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Restless.mp3",
+   "title": "Restless",
+   "genres": [
+    "Electronic",
+    "IDM",
+    "Experimental",
+    "Ambient"
+   ],
+   "bpm": 120,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Retro.mp3",
+   "title": "Retro",
+   "genres": [
+    "Electronic",
+    "Techno",
+    "House",
+    "Euro House"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Round the bend.mp3",
+   "title": "Round the bend",
+   "genres": [
+    "Electronic",
+    "Psy-Trance",
+    "Progressive Trance"
+   ],
+   "bpm": 138,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Sanitation day on Venus.mp3",
+   "title": "Sanitation day on Venus",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Ambient"
+   ],
+   "bpm": 154,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Schizophrenia.mp3",
+   "title": "Schizophrenia",
+   "genres": [
+    "Electronic",
+    "Experimental"
+   ],
+   "bpm": 180,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Serene summer.mp3",
+   "title": "Serene summer",
+   "genres": [
+    "Electronic",
+    "House",
+    "Deep House",
+    "Synth-pop"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Shake your head.mp3",
+   "title": "Shake your head",
+   "genres": [
+    "Electronic",
+    "Downtempo",
+    "Trip Hop",
+    "Dub"
+   ],
+   "bpm": 77,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Silence on the shore.mp3",
+   "title": "Silence on the shore",
+   "genres": [
+    "Electronic",
+    "Downtempo",
+    "Trip Hop",
+    "Ambient"
+   ],
+   "bpm": 78,
+   "album": "One",
+   "year": 2024
+  },
+  {
+   "file": "Sneeze.mp3",
+   "title": "Sneeze",
+   "genres": [
+    "Electronic",
+    "Drum n Bass",
+    "IDM",
+    "Experimental"
+   ],
+   "bpm": 86,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Someday.mp3",
+   "title": "Someday",
+   "genres": [
+    "Electronic",
+    "Ambient"
+   ],
+   "bpm": 90,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Space vacuum.mp3",
+   "title": "Space vacuum",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Experimental"
+   ],
+   "bpm": 80,
+   "album": "Unbroken void",
+   "year": 2025
+  },
+  {
+   "file": "Storm.mp3",
+   "title": "Storm",
+   "genres": [
+    "Electronic",
+    "Techno"
+   ],
+   "bpm": 68,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Stupidity.mp3",
+   "title": "Stupidity",
+   "genres": [
+    "Electronic",
+    "Trance",
+    "Hard Trance",
+    "Drum n Bass"
+   ],
+   "bpm": 76,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Sunrise Solitude.mp3",
+   "title": "Sunrise Solitude",
+   "genres": [
+    "Electronic",
+    "Drum n Bass",
+    "Breakcore",
+    "Jungle"
+   ],
+   "bpm": 90,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Sunrise on the balcony.mp3",
+   "title": "Sunrise on the balcony",
+   "genres": [
+    "Electronic",
+    "House",
+    "Deep House"
+   ],
+   "bpm": 124,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Sweet morning.mp3",
+   "title": "Sweet morning",
+   "genres": [
+    "Hip Hop",
+    "Cloud Rap",
+    "Trap"
+   ],
+   "bpm": 128,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Synchrowaves.mp3",
+   "title": "Synchrowaves",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Experimental",
+    "Dark Ambient"
+   ],
+   "bpm": 121,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Techno v001.mp3",
+   "title": "Techno v001",
+   "genres": [
+    "Electronic",
+    "Hard House",
+    "Donk"
+   ],
+   "bpm": 150,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Techno void.mp3",
+   "title": "Techno void",
+   "genres": [
+    "Electronic",
+    "Techno",
+    "Rhythmic Noise"
+   ],
+   "bpm": 150,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Thats her.mp3",
+   "title": "Thats her",
+   "genres": [
+    "Rock",
+    "Math Rock",
+    "Alternative Rock",
+    "Punk"
+   ],
+   "bpm": 87,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "The backside.mp3",
+   "title": "The backside",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Downtempo",
+    "Experimental"
+   ],
+   "bpm": 90,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "The black hole.mp3",
+   "title": "The black hole",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Experimental"
+   ],
+   "bpm": 100,
+   "album": "Ascension",
+   "year": 2024
+  },
+  {
+   "file": "Threnody.mp3",
+   "title": "Threnody",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Techno",
+    "Experimental"
+   ],
+   "bpm": 115,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "TikTak.mp3",
+   "title": "TikTak",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Ambient",
+    "Chiptune"
+   ],
+   "bpm": 87,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Trance.mp3",
+   "title": "Trance",
+   "genres": [
+    "Electronic",
+    "Trance",
+    "Progressive Trance",
+    "Psy-Trance"
+   ],
+   "bpm": 140,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Turn it down.mp3",
+   "title": "Turn it down",
+   "genres": [
+    "Electronic",
+    "Halftime",
+    "Juke",
+    "Dubstep"
+   ],
+   "bpm": 80,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Velvet Skies.mp3",
+   "title": "Velvet Skies",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Synthwave",
+    "Downtempo"
+   ],
+   "bpm": 128,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Void Wave.mp3",
+   "title": "Void Wave",
+   "genres": [
+    "Electronic",
+    "Trance",
+    "Progressive House",
+    "Techno"
+   ],
+   "bpm": 135,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Voltage.mp3",
+   "title": "Voltage",
+   "genres": [
+    "Electronic",
+    "Techno",
+    "Ambient",
+    "Deep House"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Wisdom of elders.mp3",
+   "title": "Wisdom of elders",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Techno"
+   ],
+   "bpm": 120,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Wrong turn.mp3",
+   "title": "Wrong turn",
+   "genres": [
+    "Electronic",
+    "Ambient",
+    "Experimental",
+    "IDM"
+   ],
+   "bpm": 150,
+   "album": null,
+   "year": null
+  },
+  {
+   "file": "Yes to you.mp3",
+   "title": "Yes to you",
+   "genres": [
+    "Electronic",
+    "Drum n Bass",
+    "Jungle"
+   ],
+   "bpm": 172,
+   "album": "One",
+   "year": 2024
+  }
+ ]
+}

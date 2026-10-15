@@ -11,6 +11,7 @@ export interface Track {
   bitrate: string;
   sampleRate: string;
   bpm?: number;
+  genres?: string[];
   source?: 'embedded' | 'github';
   sizeBytes?: number;
   lastModified?: number;

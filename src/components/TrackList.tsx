@@ -9,13 +9,16 @@ import {
   Music,
   ChevronDown,
   ChevronUp,
+  ArrowDownWideNarrow,
+  ArrowUpAZ,
+  Tag,
 } from 'lucide-react';
 
 interface TrackListProps {
   onShowToast: (text: string) => void;
 }
 
-type FilterCategory = 'all' | 'favorites' | string;
+type SortMode = 'new' | 'name';
 
 export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
   const {
@@ -33,38 +36,63 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
   // Collapsed by default according to user requirement
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<FilterCategory>('all');
+  const [sortMode, setSortMode] = useState<SortMode>('new');
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [isGenrePanelOpen, setIsGenrePanelOpen] = useState(false);
 
-  // Categories
-  const categories = useMemo(() => {
-    const list: { id: FilterCategory; label: string }[] = [
-      { id: 'all', label: `Все треки (${tracks.length})` },
-      { id: 'favorites', label: `Избранное (${favorites.length})` },
-    ];
-    return list;
-  }, [tracks, favorites]);
+  // Unique genres from metadata index, alphabetical
+  const allGenres = useMemo(() => {
+    const set = new Set<string>();
+    for (const t of tracks) {
+      for (const g of t.genres || []) set.add(g);
+    }
+    return Array.from(set).sort((a, b) =>
+      a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
+    );
+  }, [tracks]);
 
-  // Filtered tracks
+  const toggleGenre = (genre: string) => {
+    setSelectedGenres((prev) =>
+      prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre],
+    );
+  };
+
+  // Filtered + sorted tracks
   const filteredTracks = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
     const filtered = tracks.filter((track) => {
-      const q = searchQuery.toLowerCase().trim();
       const matchesSearch = !q || track.title.toLowerCase().includes(q);
 
-      let matchesCategory = true;
-      if (selectedCategory === 'favorites') {
-        matchesCategory = favorites.includes(track.id);
-      }
+      // Favorites filter (compatible with everything else)
+      const matchesFavorites = !onlyFavorites || favorites.includes(track.id);
 
-      return matchesSearch && matchesCategory;
+      // Genre filter: OR-logic across selected genres
+      const trackGenres = track.genres || [];
+      const matchesGenre =
+        selectedGenres.length === 0 ||
+        selectedGenres.some((g) => trackGenres.includes(g));
+
+      return matchesSearch && matchesFavorites && matchesGenre;
     });
 
-    // Sort by lastModified (newest first), filename as tiebreaker
-    return filtered.sort((a, b) => {
-      const diff = (b.lastModified || 0) - (a.lastModified || 0);
-      if (diff !== 0) return diff;
-      return a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' });
-    });
-  }, [tracks, searchQuery, selectedCategory, favorites]);
+    const sorted = [...filtered];
+    if (sortMode === 'name') {
+      sorted.sort((a, b) =>
+        a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' }),
+      );
+    } else {
+      // 'new': newest first (by commit date), title as tiebreaker
+      sorted.sort((a, b) => {
+        const diff = (b.lastModified || 0) - (a.lastModified || 0);
+        if (diff !== 0) return diff;
+        return a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' });
+      });
+    }
+    return sorted;
+  }, [tracks, searchQuery, sortMode, onlyFavorites, selectedGenres, favorites]);
+
+  const hasActiveFilter = onlyFavorites || selectedGenres.length > 0 || searchQuery.trim() !== '';
 
   return (
     <section id="track-discography-section" className="w-full space-y-3">
@@ -114,25 +142,123 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
               )}
             </div>
 
-            {/* Category Filter Chips - Wrapped for all screen sizes */}
+            {/* Mode row: sorts + filters */}
             <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-mono">
-              {categories.map((cat) => {
-                const isActive = selectedCategory === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-2.5 py-1 rounded-lg transition text-[11px] cursor-pointer ${
-                      isActive
-                        ? 'bg-neutral-800 text-white font-medium border border-neutral-700 shadow-sm'
-                        : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900 border border-transparent'
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                );
-              })}
+              <button
+                onClick={() => setSortMode('new')}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg transition cursor-pointer ${
+                  sortMode === 'new'
+                    ? 'bg-neutral-800 text-white font-medium border border-neutral-700 shadow-sm'
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900 border border-transparent'
+                }`}
+                title="Сначала недавно добавленные"
+              >
+                <ArrowDownWideNarrow className="w-3 h-3" />
+                Новое
+              </button>
+
+              <button
+                onClick={() => setSortMode('name')}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg transition cursor-pointer ${
+                  sortMode === 'name'
+                    ? 'bg-neutral-800 text-white font-medium border border-neutral-700 shadow-sm'
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900 border border-transparent'
+                }`}
+                title="По алфавиту"
+              >
+                <ArrowUpAZ className="w-3 h-3" />
+                По имени
+              </button>
+
+              <span className="w-px h-4 bg-neutral-800 mx-0.5" />
+
+              <button
+                onClick={() => setIsGenrePanelOpen((v) => !v)}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg transition cursor-pointer ${
+                  selectedGenres.length > 0
+                    ? 'bg-neutral-800 text-white font-medium border border-neutral-700 shadow-sm'
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900 border border-transparent'
+                }`}
+                title="Фильтр по жанрам"
+              >
+                <Tag className="w-3 h-3" />
+                Жанры{selectedGenres.length > 0 ? ` (${selectedGenres.length})` : ''}
+                <ChevronDown
+                  className={`w-3 h-3 transition-transform ${isGenrePanelOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              <button
+                onClick={() => setOnlyFavorites((v) => !v)}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg transition cursor-pointer ${
+                  onlyFavorites
+                    ? 'bg-rose-500/15 text-rose-300 font-medium border border-rose-500/30'
+                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900 border border-transparent'
+                }`}
+                title="Только избранное"
+              >
+                <Heart className={`w-3 h-3 ${onlyFavorites ? 'fill-rose-300' : ''}`} />
+                Избранное
+              </button>
             </div>
+
+            {/* Genre filter panel — collapsible, 2-3 columns */}
+            {isGenrePanelOpen && (
+              <div className="rounded-xl border border-neutral-800 bg-neutral-950/80 p-3 space-y-2 animate-fadeIn">
+                {allGenres.length === 0 ? (
+                  <p className="text-[11px] font-mono text-neutral-500">
+                    Жанры не найдены в метаданных.
+                  </p>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-3 gap-y-1 max-h-56 overflow-y-auto">
+                      {allGenres.map((genre) => {
+                        const checked = selectedGenres.includes(genre);
+                        return (
+                          <label
+                            key={genre}
+                            className="flex items-center gap-1.5 text-[11px] font-mono text-neutral-300 hover:text-white cursor-pointer select-none"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => toggleGenre(genre)}
+                              className="accent-neutral-500 w-3 h-3 cursor-pointer"
+                            />
+                            <span className="truncate">{genre}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                    {selectedGenres.length > 0 && (
+                      <button
+                        onClick={() => setSelectedGenres([])}
+                        className="text-[10px] font-mono text-neutral-500 hover:text-neutral-300 cursor-pointer"
+                      >
+                        Сбросить жанры
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Active filters summary */}
+            {hasActiveFilter && (
+              <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono text-neutral-500">
+                <span>Найдено: {filteredTracks.length}</span>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedGenres([]);
+                    setOnlyFavorites(false);
+                  }}
+                  className="hover:text-neutral-300 cursor-pointer"
+                >
+                  Сбросить всё
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Track Rows */}
@@ -203,7 +329,9 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
                           </p>
                         </div>
                         <p className="text-[10px] text-neutral-500 font-mono truncate">
-                          {ARTIST_NAME}
+                          {track.genres && track.genres.length > 0
+                            ? track.genres.join(' / ')
+                            : ARTIST_NAME}
                         </p>
                       </div>
                     </div>

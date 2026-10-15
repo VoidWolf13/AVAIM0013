@@ -127,6 +127,70 @@ interface GitHubContentItem {
   type: 'file' | 'dir';
 }
 
+export interface MetadataIndexEntry {
+  file: string;
+  title: string;
+  genres: string[];
+  bpm: number | null;
+  album: string | null;
+  year: number | null;
+}
+
+export interface MetadataIndex {
+  generated: string;
+  count: number;
+  genres: string[];
+  tracks: MetadataIndexEntry[];
+}
+
+const STORAGE_KEY_METADATA_INDEX = 'avaim_metadata_index';
+
+/**
+ * Читает индекс метаданных music/index.json (генерирует конвейер avaim).
+ * Возвращает карту «имя файла -> запись». При любой ошибке — пустая карта,
+ * сайт продолжает работать без жанров.
+ */
+export async function fetchMetadataIndex(
+  owner: string,
+  repo: string,
+  branch: string,
+): Promise<Map<string, MetadataIndexEntry>> {
+  const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branch || 'main'}/music/index.json`;
+  try {
+    const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (!resp.ok) {
+      return loadCachedIndex();
+    }
+    const data = (await resp.json()) as MetadataIndex;
+    const map = new Map<string, MetadataIndexEntry>();
+    for (const entry of data.tracks || []) {
+      map.set(entry.file, entry);
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY_METADATA_INDEX, JSON.stringify(data.tracks || []));
+    } catch {
+      // ignore quota errors
+    }
+    return map;
+  } catch {
+    return loadCachedIndex();
+  }
+}
+
+function loadCachedIndex(): Map<string, MetadataIndexEntry> {
+  const map = new Map<string, MetadataIndexEntry>();
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_METADATA_INDEX);
+    if (saved) {
+      const arr = JSON.parse(saved) as MetadataIndexEntry[];
+      for (const entry of arr) map.set(entry.file, entry);
+    }
+  } catch {
+    // ignore
+  }
+  return map;
+}
+
 /**
  * Fetch and scan audio files from a GitHub repository folder (e.g. "music")
  */
@@ -175,6 +239,9 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
   }
 
   const customMetadataMap = getCustomTrackMetadata();
+
+  // Индекс метаданных (жанры, BPM, альбом) — генерирует конвейер avaim
+  const indexMap = await fetchMetadataIndex(owner, repo, branch);
 
   // Fetch last-modified dates from GitHub commits API
   const cachedDates = getCachedCommitDates();
@@ -268,6 +335,7 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
       bitrate,
       sampleRate: format === 'flac' ? '44.1 kHz / 24-bit' : '44.1 kHz / 16-bit',
       bpm: customMeta?.bpm !== undefined ? customMeta.bpm : classification.estimatedBpm,
+      genres: indexMap.get(file.name)?.genres || [],
       source: 'github',
       sizeBytes: file.size,
       lastModified: lastMod,
