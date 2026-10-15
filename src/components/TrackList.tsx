@@ -52,6 +52,15 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
     );
   }, [tracks]);
 
+  // Parent genres = first element of each track's genre list (pipeline writes parent first)
+  const parentGenres = useMemo(() => {
+    const set = new Set<string>();
+    for (const t of tracks) {
+      if (t.genres && t.genres.length > 0) set.add(t.genres[0]);
+    }
+    return set;
+  }, [tracks]);
+
   const toggleGenre = (genre: string) => {
     setSelectedGenres((prev) =>
       prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre],
@@ -143,7 +152,7 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
             </div>
 
             {/* Mode row: sorts + filters */}
-            <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-mono">
+            <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-mono rounded-xl bg-neutral-900/60 border border-neutral-800 px-3 py-2">
               <button
                 onClick={() => setSortMode('new')}
                 className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg transition cursor-pointer ${
@@ -211,21 +220,26 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
                   </p>
                 ) : (
                   <>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-3 gap-y-1 max-h-56 overflow-y-auto">
+                    <div className="columns-2 sm:columns-3 gap-x-4 max-h-56 overflow-y-auto">
                       {allGenres.map((genre) => {
                         const checked = selectedGenres.includes(genre);
+                        const isParent = parentGenres.has(genre);
                         return (
                           <label
                             key={genre}
-                            className="flex items-center gap-1.5 text-[11px] font-mono text-neutral-300 hover:text-white cursor-pointer select-none"
+                            className="flex items-center gap-1.5 text-[13px] font-mono text-neutral-300 hover:text-white cursor-pointer select-none py-0.5 break-inside-avoid"
                           >
                             <input
                               type="checkbox"
                               checked={checked}
                               onChange={() => toggleGenre(genre)}
-                              className="accent-neutral-500 w-3 h-3 cursor-pointer"
+                              className="accent-neutral-500 w-3.5 h-3.5 cursor-pointer shrink-0"
                             />
-                            <span className="truncate">{genre}</span>
+                            <span
+                              className={`truncate ${isParent ? 'font-semibold text-neutral-100' : ''}`}
+                            >
+                              {genre}
+                            </span>
                           </label>
                         );
                       })}
