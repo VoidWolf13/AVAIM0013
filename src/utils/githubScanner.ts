@@ -43,7 +43,6 @@ export function cacheGitHubTracks(tracks: Track[]): void {
 }
 
 const STORAGE_KEY_CUSTOM_METADATA = 'avaim_custom_track_metadata';
-const STORAGE_KEY_COMMIT_DATES = 'avaim_github_commit_dates';
 
 export function getCustomTrackMetadata(): Record<string, { moodTag?: string; category?: string; description?: string; bpm?: number }> {
   try {
@@ -61,23 +60,6 @@ export function saveCustomTrackMetadata(filenameOrId: string, metadata: { moodTa
     localStorage.setItem(STORAGE_KEY_CUSTOM_METADATA, JSON.stringify(current));
   } catch (err) {
     console.warn('Failed to save custom track metadata:', err);
-  }
-}
-
-export function getCachedCommitDates(): Record<string, number> {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY_COMMIT_DATES);
-    return saved ? JSON.parse(saved) : {};
-  } catch {
-    return {};
-  }
-}
-
-export function cacheCommitDates(dates: Record<string, number>): void {
-  try {
-    localStorage.setItem(STORAGE_KEY_COMMIT_DATES, JSON.stringify(dates));
-  } catch (err) {
-    console.warn('Failed to cache commit dates:', err);
   }
 }
 
@@ -115,6 +97,7 @@ export interface MetadataIndexEntry {
   bpm: number | null;
   album: string | null;
   year: number | null;
+  added?: string | null;
 }
 
 export interface MetadataIndex {
@@ -125,6 +108,7 @@ export interface MetadataIndex {
 }
 
 const STORAGE_KEY_METADATA_INDEX = 'avaim_metadata_index';
+const METADATA_INDEX_TTL_MS = 24 * 60 * 60 * 1000; // сутки
 
 /**
  * Читает индекс метаданных music/index.json (генерирует конвейер avaim).
@@ -148,7 +132,10 @@ export async function fetchMetadataIndex(
       map.set(entry.file, entry);
     }
     try {
-      localStorage.setItem(STORAGE_KEY_METADATA_INDEX, JSON.stringify(data.tracks || []));
+      localStorage.setItem(
+        STORAGE_KEY_METADATA_INDEX,
+        JSON.stringify({ at: Date.now(), tracks: data.tracks || [] }),
+      );
     } catch {
       // ignore quota errors
     }
@@ -163,8 +150,9 @@ function loadCachedIndex(): Map<string, MetadataIndexEntry> {
   try {
     const saved = localStorage.getItem(STORAGE_KEY_METADATA_INDEX);
     if (saved) {
-      const arr = JSON.parse(saved) as MetadataIndexEntry[];
-      for (const entry of arr) map.set(entry.file, entry);
+      const parsed = JSON.parse(saved) as { at: number; tracks: MetadataIndexEntry[] };
+      if (Date.now() - (parsed.at || 0) > METADATA_INDEX_TTL_MS) return map;
+      for (const entry of parsed.tracks || []) map.set(entry.file, entry);
     }
   } catch {
     // ignore
@@ -221,57 +209,22 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
 
   const customMetadataMap = getCustomTrackMetadata();
 
-  // Индекс метаданных (жанры, BPM, альбом) — генерирует конвейер avaim
+  // Индекс метаданных (жанры, BPM, альбом, дата добавления) — генерирует конвейер avaim.
+  // Даты берём отсюда, а не из GitHub commits API: там каскад из ~20 запросов и лимит 60/ч.
   const indexMap = await fetchMetadataIndex(owner, repo, branch);
 
-  // Fetch last-modified dates from GitHub commits API
-  const cachedDates = getCachedCommitDates();
-  const commitDates: Record<string, number> = { ...cachedDates };
+  // Дата добавления трека (мс) из индекса; 0 — если индекс недоступен
+  const addedMs = (name: string): number => {
+    const iso = indexMap.get(name)?.added;
+    if (!iso) return 0;
+    const t = Date.parse(iso);
+    return Number.isNaN(t) ? 0 : t;
+  };
 
-  const filesNeedingDates = audioFiles.filter(
-    f => !commitDates[f.path] && !commitDates[f.name]
-  );
-
-  if (filesNeedingDates.length > 0) {
-    try {
-      const commitsUrl = `https://api.github.com/repos/${owner}/${repo}/commits?path=${encodeURIComponent(cleanFolder)}&per_page=50`;
-      const commitsResp = await fetch(commitsUrl, {
-        headers: { 'Accept': 'application/vnd.github.v3+json' },
-      });
-
-      if (commitsResp.ok) {
-        const commits = await commitsResp.json() as Array<{ url: string; commit: { committer: { date: string } } }>;
-
-        const maxDetailFetches = 20;
-        const detailResults = await Promise.allSettled(
-          commits.slice(0, maxDetailFetches).map(c =>
-            fetch(c.url, { headers: { 'Accept': 'application/vnd.github.v3+json' } }).then(r => r.ok ? r.json() : null)
-          )
-        );
-
-        for (const result of detailResults) {
-          if (result.status === 'fulfilled' && result.value) {
-            const commitDate = new Date(result.value.commit.committer.date).getTime();
-            for (const fileEntry of (result.value.files || []) as Array<{ filename: string }>) {
-              const fname = fileEntry.filename;
-              if (!commitDates[fname]) {
-                commitDates[fname] = commitDate;
-              }
-            }
-          }
-        }
-
-        cacheCommitDates(commitDates);
-      }
-    } catch {
-      // Ignore — fall back to cached dates only
-    }
-  }
-
-  // Sort by last modification date (newest first), filename as tiebreaker
+  // Sort by added date (newest first), filename as tiebreaker
   audioFiles.sort((a, b) => {
-    const dateA = commitDates[a.path] || commitDates[a.name] || 0;
-    const dateB = commitDates[b.path] || commitDates[b.name] || 0;
+    const dateA = addedMs(a.name);
+    const dateB = addedMs(b.name);
     if (dateB !== dateA) {
       return dateB - dateA;
     }
@@ -301,7 +254,7 @@ export async function fetchTracksFromGitHub(config: GitHubSyncConfig): Promise<{
     }
 
     const customMeta = customMetadataMap[file.name] || customMetadataMap[title];
-    const lastMod = commitDates[file.path] || commitDates[file.name];
+    const lastMod = addedMs(file.name);
 
     return {
       id: idx,

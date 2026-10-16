@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useAudio } from '../context/AudioContext';
 import { ARTIST_NAME } from '../data/tracks';
 import {
@@ -31,6 +31,7 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
     isFavorite,
     favorites,
     isSyncingGitHub,
+    setQueue,
   } = useAudio();
 
   // Collapsed by default according to user requirement
@@ -60,6 +61,16 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
     }
     return set;
   }, [tracks]);
+
+  // Split genres into 3 columns, alphabetical top-to-bottom per column
+  const genreColumns = useMemo(() => {
+    const perCol = Math.ceil(allGenres.length / 3);
+    return [
+      allGenres.slice(0, perCol),
+      allGenres.slice(perCol, perCol * 2),
+      allGenres.slice(perCol * 2),
+    ];
+  }, [allGenres]);
 
   const toggleGenre = (genre: string) => {
     setSelectedGenres((prev) =>
@@ -100,6 +111,12 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
     }
     return sorted;
   }, [tracks, searchQuery, sortMode, onlyFavorites, selectedGenres, favorites]);
+
+  // Синхронизируем очередь плеера с отфильтрованным списком:
+  // «мешок» и «следующий/предыдущий» ходят по видимым трекам, а не по всему каталогу.
+  useEffect(() => {
+    setQueue(filteredTracks);
+  }, [filteredTracks, setQueue]);
 
   const hasActiveFilter = onlyFavorites || selectedGenres.length > 0 || searchQuery.trim() !== '';
 
@@ -220,29 +237,33 @@ export const TrackList: React.FC<TrackListProps> = ({ onShowToast }) => {
                   </p>
                 ) : (
                   <>
-                    <div className="columns-2 sm:columns-3 gap-x-4 max-h-56 overflow-y-auto">
-                      {allGenres.map((genre) => {
-                        const checked = selectedGenres.includes(genre);
-                        const isParent = parentGenres.has(genre);
-                        return (
-                          <label
-                            key={genre}
-                            className="flex items-center gap-1.5 text-[13px] font-mono text-neutral-300 hover:text-white cursor-pointer select-none py-0.5 break-inside-avoid"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              onChange={() => toggleGenre(genre)}
-                              className="accent-neutral-500 w-3.5 h-3.5 cursor-pointer shrink-0"
-                            />
-                            <span
-                              className={`truncate ${isParent ? 'font-semibold text-neutral-100' : ''}`}
-                            >
-                              {genre}
-                            </span>
-                          </label>
-                        );
-                      })}
+                    <div className="flex gap-x-4 max-h-56 overflow-y-auto">
+                      {genreColumns.map((col, ci) => (
+                        <div key={ci} className="flex-1 min-w-0 space-y-0.5">
+                          {col.map((genre) => {
+                            const checked = selectedGenres.includes(genre);
+                            const isParent = parentGenres.has(genre);
+                            return (
+                              <label
+                                key={genre}
+                                className="flex items-center gap-1.5 text-[13px] font-mono text-neutral-300 hover:text-white cursor-pointer select-none py-0.5"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={() => toggleGenre(genre)}
+                                  className="accent-neutral-500 w-3.5 h-3.5 cursor-pointer shrink-0"
+                                />
+                                <span
+                                  className={`truncate ${isParent ? 'font-semibold text-neutral-100' : ''}`}
+                                >
+                                  {genre}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      ))}
                     </div>
                     {selectedGenres.length > 0 && (
                       <button

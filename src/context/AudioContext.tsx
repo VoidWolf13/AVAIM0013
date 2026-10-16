@@ -37,6 +37,7 @@ interface AudioContextType {
 
   // Actions
   playTrack: (trackOrIndex: Track | number) => void;
+  setQueue: (tracks: Track[]) => void;
   togglePlayPause: () => void;
   playNext: () => void;
   playPrevious: () => void;
@@ -154,42 +155,65 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Режим random: «мешок» (shuffle-bag) + история прослушанного.
   // bagRef — ещё не сыгранные индексы текущего круга (тасуются заново, когда опустеет).
   // historyRef — порядок воспроизведения, historyPosRef — текущая позиция в нём.
-  const bagRef = useRef<number[]>([]);
-  const bagSizeRef = useRef<number>(0);
-  const historyRef = useRef<number[]>([]);
+  const bagRef = useRef<string[]>([]);
+  const historyRef = useRef<string[]>([]);
   const historyPosRef = useRef<number>(-1);
   const suppressHistoryRef = useRef<boolean>(false);
+  // Очередь = имена файлов отфильтрованного списка; null → играем по всему каталогу
+  const queueRef = useRef<string[] | null>(null);
+  const queueKeyRef = useRef<string>('');
 
-  const shuffleIndices = (n: number): number[] => {
-    const arr = Array.from({ length: n }, (_, i) => i);
-    for (let i = n - 1; i > 0; i--) {
+  // Треки текущей очереди в её порядке (без фильтра — весь каталог)
+  const resolveQueue = (): Track[] => {
+    if (!queueRef.current) return tracks;
+    const byName = new Map(tracks.map((t) => [t.filename, t]));
+    return queueRef.current
+      .map((name) => byName.get(name))
+      .filter((t): t is Track => Boolean(t));
+  };
+
+  const shuffleNames = (names: string[]): string[] => {
+    const arr = [...names];
+    for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
   };
 
-  const recordPlay = (index: number) => {
+  const recordPlay = (name: string) => {
     // новый выбор обрезает «будущее» истории (как в браузере)
     historyRef.current = historyRef.current.slice(0, historyPosRef.current + 1);
-    historyRef.current.push(index);
+    historyRef.current.push(name);
     if (historyRef.current.length > 100) historyRef.current.shift();
     historyPosRef.current = historyRef.current.length - 1;
   };
 
-  const refillBag = (currentIdx: number) => {
-    // тасуем все индексы и убираем текущий, чтобы он не повторился в этом круге
-    bagRef.current = shuffleIndices(tracks.length).filter((i) => i !== currentIdx);
-    bagSizeRef.current = tracks.length;
+  const refillBag = (currentName: string) => {
+    // тасуем очередь и убираем текущий, чтобы он не повторился в этом круге
+    const names = (queueRef.current ?? tracks.map((t) => t.filename)).filter(
+      (n) => n !== currentName,
+    );
+    bagRef.current = shuffleNames(names);
   };
 
-  const drawFromBag = (currentIdx: number): number => {
-    if (bagSizeRef.current !== tracks.length || bagRef.current.length === 0) {
-      refillBag(currentIdx);
-    }
-    if (bagRef.current.length === 0) return currentIdx;  // в списке один трек
-    return bagRef.current.shift() as number;
+  const drawFromBag = (currentName: string): string => {
+    if (bagRef.current.length === 0) refillBag(currentName);
+    if (bagRef.current.length === 0) return currentName; // в очереди один трек
+    return bagRef.current.shift() as string;
   };
+
+  // Очередь задаёт отфильтрованный список: мешок и история пересобираются при её смене
+  const setQueue = useCallback((list: Track[]) => {
+    const names = list.map((t) => t.filename);
+    const key = names.join('\n');
+    if (key === queueKeyRef.current) return;
+    queueKeyRef.current = key;
+    queueRef.current = names;
+    bagRef.current = [];
+    historyRef.current = [];
+    historyPosRef.current = -1;
+  }, []);
 
   const currentTrack = tracks[currentTrackIndex] || tracks[0] || EMPTY_TRACK;
 
@@ -226,7 +250,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setTracks(TRACKS);
     try {
       localStorage.removeItem('avaim_github_cached_tracks');
-      localStorage.removeItem('avaim_github_commit_dates');
     } catch {
       // ignore
     }
@@ -311,11 +334,11 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
 
     // мешок: сыгранный трек убираем из текущего круга (чтобы не повторился)
-    const bagIdx = bagRef.current.indexOf(targetIndex);
+    const bagIdx = bagRef.current.indexOf(targetTrack.filename);
     if (bagIdx !== -1) bagRef.current.splice(bagIdx, 1);
     // история: обычный запуск пишем, навигацию по истории — нет
     if (!suppressHistoryRef.current) {
-      recordPlay(targetIndex);
+      recordPlay(targetTrack.filename);
     }
 
     setCurrentTrackIndex(targetIndex);
@@ -374,18 +397,24 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [initWebAudio, tracks.length, currentTrack, currentTrackIndex, playTrack]);
 
-  // Play Next
+  // Play Next — ходит по очереди (отфильтрованному списку), а не по всему каталогу
   const playNext = useCallback(() => {
-    if (tracks.length === 0) return;
+    const queue = resolveQueue();
+    if (queue.length === 0) return;
+
+    const indexOfName = (name: string) => tracks.findIndex((t) => t.filename === name);
 
     if (playbackMode === 'random') {
       // берём следующий из «мешка»: без повторов, пока не проиграют все
-      playTrack(drawFromBag(currentTrackIndex));
+      const idx = indexOfName(drawFromBag(currentTrack.filename));
+      if (idx !== -1) playTrack(idx);
     } else {
-      const nextIndex = (currentTrackIndex + 1) % tracks.length;
-      playTrack(nextIndex);
+      const pos = queue.findIndex((t) => t.filename === currentTrack.filename);
+      const nextPos = pos === -1 ? 0 : (pos + 1) % queue.length;
+      const idx = indexOfName(queue[nextPos].filename);
+      if (idx !== -1) playTrack(idx);
     }
-  }, [currentTrackIndex, playbackMode, playTrack, tracks]);
+  }, [currentTrack, playbackMode, playTrack, tracks]);
 
   // Play Previous
   const playPrevious = useCallback(() => {
@@ -397,22 +426,30 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     if (tracks.length === 0) return;
 
+    const indexOfName = (name: string) => tracks.findIndex((t) => t.filename === name);
+
     if (playbackMode === 'random') {
       // назад — по истории прослушанного
       if (historyPosRef.current > 0) {
         historyPosRef.current -= 1;
-        const idx = historyRef.current[historyPosRef.current];
-        suppressHistoryRef.current = true;
-        playTrack(idx);
-        suppressHistoryRef.current = false;
+        const name = historyRef.current[historyPosRef.current];
+        const idx = indexOfName(name);
+        if (idx !== -1) {
+          suppressHistoryRef.current = true;
+          playTrack(idx);
+          suppressHistoryRef.current = false;
+        }
       } else {
         playTrack(currentTrackIndex);
       }
     } else {
-      const prevIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-      playTrack(prevIndex);
+      const queue = resolveQueue();
+      const pos = queue.findIndex((t) => t.filename === currentTrack.filename);
+      const prevPos = pos <= 0 ? queue.length - 1 : pos - 1;
+      const idx = indexOfName(queue[prevPos].filename);
+      if (idx !== -1) playTrack(idx);
     }
-  }, [currentTrackIndex, playbackMode, playTrack, tracks]);
+  }, [currentTrack, currentTrackIndex, playbackMode, playTrack, tracks]);
 
   // Seek
   const seek = useCallback((seconds: number) => {
@@ -652,6 +689,17 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [playbackMode, playNext, volume]);
 
+  // Закрываем Web Audio при размонтировании провайдера (иначе граф и AudioContext утекают)
+  useEffect(() => {
+    return () => {
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(() => {});
+        audioContextRef.current = null;
+      }
+      isWebAudioInitialized.current = false;
+    };
+  }, []);
+
   return (
     <AudioContext.Provider
       value={{
@@ -679,6 +727,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         githubConfig,
         lastSyncTime,
         playTrack,
+        setQueue,
         togglePlayPause,
         playNext,
         playPrevious,
