@@ -444,6 +444,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     } else {
       const queue = resolveQueue();
+      if (queue.length === 0) return; // фильтр ничего не нашёл — очередь пуста
       const pos = queue.findIndex((t) => t.filename === currentTrack.filename);
       const prevPos = pos <= 0 ? queue.length - 1 : pos - 1;
       const idx = indexOfName(queue[prevPos].filename);
