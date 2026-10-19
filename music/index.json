@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-16",
- "count": 116,
+ "generated": "2026-10-19",
+ "count": 117,
  "genres": [
   "Ambient",
   "Black Metal",
@@ -1521,6 +1521,19 @@
    "album": "One",
    "year": 2024,
    "added": "2026-10-15T00:44:27+03:00"
+  },
+  {
+   "file": "Zenith.mp3",
+   "title": "Zenith",
+   "genres": [
+    "Electronic",
+    "Experimental",
+    "Ambient"
+   ],
+   "bpm": 119,
+   "album": null,
+   "year": null,
+   "added": "2026-10-19T15:43:28+03:00"
   }
  ]
 }
