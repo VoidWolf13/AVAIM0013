@@ -3,6 +3,26 @@
 Формат — Keep a Changelog (keepachangelog.com/ru/1.1.0/).
 Версии — SemVer (semver.org/lang/ru/).
 
+## [1.9.0] — 2026-10-24
+
+### Added
+- Сайт: Media Session API — карточка плеера в системном медиа-уведомлении.
+  Метаданные (`title`, `artist`) берутся из ID3-тегов файла (`TIT2`, `TPE1`),
+  кэшируются в памяти и `localStorage`. Обработчики `play`, `pause`,
+  `previoustrack`, `nexttrack` вызывают те же функции, что и кнопки на странице.
+- `src/utils/id3.ts` — минимальный читатель ID3v2.3/2.4: Range-запрос первых
+  64 КиБ (raw.githubusercontent отдаёт 206), разбор `TIT2`/`TPE1`,
+  поддержка UTF-8, UTF-16LE/BE и ISO-8859-1, unsynchronisation.
+
+### Notes
+- Кнопки «лайк» в Media Session нет — в спецификации такого действия не
+  существует; избранное остаётся только в интерфейсе сайта.
+- По данным MDN browser-compat-data, в Firefox для Android Media Session
+  помечен `partial_implementation` с примечанием: «Firefox exposes the API,
+  but does not provide a corresponding user-facing media control interface».
+  То есть в Chrome/Chromium/Яндексе кнопки появятся, а в Firefox на Android
+  системная карточка этим API может не управляться — проверять на устройстве.
+
 ## [1.8.1] — 2026-10-16
 
 ### Fixed

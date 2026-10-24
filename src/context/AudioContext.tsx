@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { Track, PlaybackMode, VisualizerMode, EQSettings, EQPreset, GitHubSyncConfig } from '../types';
-import { TRACKS, getTrackAudioUrl } from '../data/tracks';
+import { ARTIST_NAME, TRACKS, getTrackAudioUrl } from '../data/tracks';
 import {
   fetchTracksFromGitHub,
   getStoredGitHubConfig,
@@ -9,6 +9,7 @@ import {
   cacheGitHubTracks,
   saveCustomTrackMetadata,
 } from '../utils/githubScanner';
+import { readTags } from '../utils/id3';
 
 interface AudioContextType {
   tracks: Track[];
@@ -451,6 +452,71 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (idx !== -1) playTrack(idx);
     }
   }, [currentTrack, currentTrackIndex, playbackMode, playTrack, tracks]);
+
+  // Media Session: карточка плеера в системном уведомлении (Firefox Android,
+  // Chrome). Кнопки вызывают те же функции, что и стрелки на странице.
+  // Лайка в спецификации Media Session нет — его не добавляем.
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
+    const session = navigator.mediaSession;
+
+    const handlers: [MediaSessionAction, () => void][] = [
+      ['play', () => { void togglePlayPause(); }],
+      ['pause', () => { void togglePlayPause(); }],
+      ['previoustrack', playPrevious],
+      ['nexttrack', playNext],
+    ];
+    for (const [action, handler] of handlers) {
+      try {
+        session.setActionHandler(action, handler);
+      } catch {
+        // действие не поддержано браузером — пропускаем
+      }
+    }
+
+    return () => {
+      for (const [action] of handlers) {
+        try {
+          session.setActionHandler(action, null);
+        } catch {
+          // ignore
+        }
+      }
+    };
+  }, [togglePlayPause, playNext, playPrevious]);
+
+  // Метаданные карточки: название и исполнитель из ID3-тегов трека.
+  // Теги читаются один раз на файл (кэш в utils/id3.ts); пока не пришли —
+  // название из индекса и общий исполнитель.
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
+    const session = navigator.mediaSession;
+    const track = currentTrack;
+    if (!track.filename && !track.audioUrl) return;
+
+    let cancelled = false;
+    const apply = (title: string, artist: string) => {
+      if (cancelled) return;
+      session.metadata = new MediaMetadata({ title, artist });
+    };
+
+    apply(track.title, ARTIST_NAME);
+    readTags(getTrackAudioUrl(track))
+      .then((tags) => {
+        if (tags) apply(tags.title || track.title, tags.artist || ARTIST_NAME);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentTrack]);
+
+  // Состояние карточки: play/pause в системном уведомлении.
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
+    navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+  }, [isPlaying]);
 
   // Seek
   const seek = useCallback((seconds: number) => {
