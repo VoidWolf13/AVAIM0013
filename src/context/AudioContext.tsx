@@ -11,6 +11,14 @@ import {
 } from '../utils/githubScanner';
 import { readTags } from '../utils/id3';
 
+// Обложка для карточки плеера: затемнённый фон сайта (public/*.jpg,
+// генерируется из background.jpg). Media Session принимает несколько
+// размеров — система выберет подходящий. Относительные пути от корня сайта.
+const NOTIFICATION_ARTWORK: MediaImage[] = [
+  { src: './notification-artwork-192.jpg', sizes: '192x192', type: 'image/jpeg' },
+  { src: './notification-artwork-512.jpg', sizes: '512x512', type: 'image/jpeg' },
+];
+
 interface AudioContextType {
   tracks: Track[];
   currentTrack: Track;
@@ -497,7 +505,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     let cancelled = false;
     const apply = (title: string, artist: string) => {
       if (cancelled) return;
-      session.metadata = new MediaMetadata({ title, artist });
+      session.metadata = new MediaMetadata({ title, artist, artwork: NOTIFICATION_ARTWORK });
     };
 
     apply(track.title, ARTIST_NAME);
