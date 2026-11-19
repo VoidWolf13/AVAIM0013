@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-19",
- "count": 117,
+ "generated": "2026-11-19",
+ "count": 118,
  "genres": [
   "Ambient",
   "Black Metal",
@@ -13,6 +13,7 @@
   "Deep Techno",
   "Donk",
   "Downtempo",
+  "Dream Pop",
   "Drum n Bass",
   "Dub Techno",
   "Electro",
@@ -32,6 +33,7 @@
   "Hip Hop",
   "House",
   "IDM",
+  "Indie Rock",
   "Industrial",
   "Instrumental",
   "Jazz",
@@ -46,6 +48,7 @@
   "Rhythmic Noise",
   "Rock",
   "Schranz",
+  "Shoegaze",
   "Speedcore",
   "Tech Trance",
   "Techno",
@@ -1455,6 +1458,20 @@
    "album": null,
    "year": null,
    "added": "2026-10-15T00:44:27+03:00"
+  },
+  {
+   "file": "Vibe & Shine.mp3",
+   "title": "Vibe & Shine",
+   "genres": [
+    "Rock",
+    "Dream Pop",
+    "Indie Rock",
+    "Shoegaze"
+   ],
+   "bpm": 146,
+   "album": null,
+   "year": null,
+   "added": "2026-11-19T16:09:51+03:00"
   },
   {
    "file": "Void Wave.mp3",
